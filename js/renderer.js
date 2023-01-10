@@ -9,6 +9,13 @@ const set_color = (index, r, g, b) => {
 	window.grid[index].style.setProperty('--led-color', 'rgb(' + r + ',' + g + ',' + b + ')');
 }
 
+function hsl2rgb(h,s,l) 
+{
+	let a= s*Math.min(l,1-l);
+	let f= (n,k=(n+h/30)%12) => l - a*Math.max(Math.min(k-3,9-k,1),-1);
+	return [f(0)*255,f(8)*255,f(4)*255];
+}   
+
 const digits = {
 	0: [1, 2, 3, 5, 8, 10, 11, 12],
 	1: [2, 5, 7, 10, 12],
@@ -57,7 +64,7 @@ const rows = {
 	6: 111
 }
 
-const TEST_color = [255, 0, 0]
+let TEST_color = [200, 200, 200]
 
 const render_digit = (offset, digit) => {
 	for (const pixel of digit) {
@@ -97,7 +104,31 @@ const digit_test = () => {
 }
 
 const clock_test = () => {
-	
+	let frame = 0
+
+	setInterval(() => {
+		frame = (frame + 1) % 360
+		TEST_color = hsl2rgb(frame, 1, 0.5)
+
+		for (let index = 0; index < window.grid.length; index++) {
+			set_color(index, 0, 0, 0)
+		}
+
+		const date = new Date()
+
+		const hours = [Math.floor(date.getHours() / 10), date.getHours() % 10]
+
+		render_digit(0, digits[hours[0]])
+		render_digit(4, digits[hours[1]])
+
+		const minutes = [Math.floor(date.getMinutes() / 10), date.getMinutes() % 10]
+
+		render_digit(10, digits[minutes[0]])
+		render_digit(14, digits[minutes[1]])
+
+		set_color(44, ...TEST_color)
+		set_color(83, ...TEST_color)
+	}, 20)
 }
 
 const update = () => {
@@ -119,3 +150,5 @@ const update = () => {
 // setInterval(() => {
 //     update()
 // }, 100)
+
+clock_test()
