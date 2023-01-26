@@ -108,7 +108,9 @@ const clock_test = () => {
 
 	setInterval(() => {
 		frame = (frame + 1) % 360
-		TEST_color = hsl2rgb(frame, 1, 0.5)
+		// TEST_color = hsl2rgb(frame, 1, 0.5)
+		TEST_color = [0, 0, 0]
+		const digit_color = [0, 255, 0]
 
 		for (let index = 0; index < window.grid.length; index++) {
 			set_color(index, ...TEST_color)
@@ -118,17 +120,70 @@ const clock_test = () => {
 
 		const hours = [Math.floor(date.getHours() / 10), date.getHours() % 10]
 
-		render_digit(0, digits[hours[0]], [0, 0, 0])
-		render_digit(4, digits[hours[1]], [0, 0, 0])
+		render_digit(0, digits[hours[0]], digit_color)
+		render_digit(4, digits[hours[1]], digit_color)
 
 		const minutes = [Math.floor(date.getMinutes() / 10), date.getMinutes() % 10]
 
-		render_digit(10, digits[minutes[0]], [0, 0, 0])
-		render_digit(14, digits[minutes[1]], [0, 0, 0])
+		render_digit(10, digits[minutes[0]], digit_color)
+		render_digit(14, digits[minutes[1]], digit_color)
 
-		set_color(44, 0, 0, 0)
-		set_color(83, 0, 0, 0)
+		set_color(44, ...digit_color)
+		set_color(83, ...digit_color)
 	}, 20)
+}
+
+const arduino_test = async () => {
+	for (let index = 0; index < window.grid.length; index++) {
+    	set_color(index, 0, 0, 0)
+    }
+
+	const port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 9600 });
+
+	const decoder = new TextDecoderStream();
+    
+    port.readable.pipeTo(decoder.writable);
+
+    const inputStream = decoder.readable;
+    const reader = inputStream.getReader();
+
+	let buffer = ""
+
+	while (true) {
+		const { value, done } = await reader.read();
+
+		if (done) {
+			console.log('done')
+			reader.releaseLock();
+			break;
+		}
+
+		try {
+			buffer += value
+
+			if (buffer.length > 100) buffer = ''
+
+			if (buffer.includes('\r\n')) {
+				const lines = buffer.split('\r\n')
+				const line = lines.shift().split(',')
+
+				const command = line.shift()
+
+				if (command == 'c') {
+					set_color(line.shift(), ...line.map((l) => parseFloat(l)))
+				} else if (command == 'f') {
+					const fps = parseFloat(line.shift())
+
+					document.getElementById('fps').innerText = fps + " fps"
+				}
+
+				buffer = lines.join('')
+			}
+		} catch (e) {
+			buffer = ''
+		}
+	}
 }
 
 const update = () => {
@@ -151,4 +206,7 @@ const update = () => {
 //     update()
 // }, 100)
 
-clock_test()
+// clock_test()
+// digit_test()
+
+arduino_test()
