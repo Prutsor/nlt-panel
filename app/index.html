@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        p {
+            margin: 2px
+        }
+
+        #content {
+            padding: 10px;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+        }
+
+        svg {
+            overflow: visible;
+
+            width: -webkit-fill-available;
+            height: auto;
+        }
+
+        body {
+            max-width: 1000px !important;
+        }
+    </style>
+</head>
+    <div style="display: flex;">
+        <h5 id="fps" style="margin-right: auto;">5 fps</h5>
+        <!-- <h5 id="file_size">2.46 GB</h5> -->
+    </div>
+
+    <div id="content"></div>
+
+    <br>
+
+    <div style="display: flex;">
+        <input type="button" onclick="window.selectArduino()" value="connect">
+    </div>
+
+    <br>
+
+    <div id="categories"></div>
+
+    <!-- <input type="button" value="fortnite" onclick="window.selectArduino()">
+
+    <div id="container" class="ja"></div> -->
+    
+    <script src="../js/grid.js"></script>
+
+    <!-- Import maps polyfill -->
+    <!-- Remove this when import maps will be widely supported -->
+    <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://threejs.org/build/three.module.js",
+                "three/addons/": "https://threejs.org/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module" src="./renderer.js"></script>
+</body>
+</html>

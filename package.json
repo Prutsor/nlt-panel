@@ -1,0 +1,25 @@
+{
+  "name": "nlt-panel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app/main.js",
+  "scripts": {
+    "test": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Prutsor/nlt-panel.git"
+  },
+  "author": "Prutsor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Prutsor/nlt-panel/issues"
+  },
+  "homepage": "https://github.com/Prutsor/nlt-panel#readme",
+  "dependencies": {
+    "@serialport/parser-delimiter": "^10.5.0",
+    "electron": "^22.1.0",
+    "electron-prompt": "^1.7.0",
+    "serialport": "^10.5.0"
+  }
+}
