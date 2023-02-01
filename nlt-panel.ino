@@ -13,29 +13,31 @@ void update() {
   for (int index = 0; index < NUM_LEDS; index++) {
     CRGB color = leds[index];
 
-    byte packet[5];
+    // byte packet[5];
 
-    packet[0] = 0x01;
-    packet[1] = (uint8_t)index;
-    packet[2] = color.red;
-    packet[3] = color.green;
-    packet[4] = color.blue;
+    // packet[0] = 0x01;
+    // packet[1] = (uint8_t)index;
+    // packet[2] = color.red;
+    // packet[3] = color.green;
+    // packet[4] = color.blue;
 
-    Serial.write(packet, 5);
-    Serial.write('\n');
+    // Serial.write(packet, 5);
+    // Serial.write('\n');
 
-    // Serial.println((String) "c," + index + "," + color.r + "," + color.g + "," + color.b);
+    Serial.println((String) "c," + index + "," + color.r + "," + color.g + "," + color.b);
   }
 }
 
 void update_fps() {
-  byte packet[2];
+  // byte packet[2];
 
-  packet[0] = 0x02;
-  packet[1] = FastLED.getFPS() >> 8;
+  // packet[0] = 0x02;
+  // packet[1] = FastLED.getFPS() >> 8;
 
-  Serial.write(packet, 2);
-  Serial.write('\n');
+  // Serial.write(packet, 2);
+  // Serial.write('\n');
+
+  Serial.println((String) "f," + FastLED.getFPS());
 }
 
 void render_digit(int offset, int digit[10], CRGB color) {

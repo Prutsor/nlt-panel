@@ -15,7 +15,7 @@ const createWindow = () => {
 	mainWindow.webContents.openDevTools();
 	mainWindow.maximize();
 
-	mainWindow.loadFile('app/index.html');
+	mainWindow.loadFile(path.join(__dirname, 'index.html'));
 };
 
 app.whenReady().then(() => {

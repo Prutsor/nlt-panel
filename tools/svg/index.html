@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+
+        <style>
+            p {
+                margin: 2px
+            }
+
+            #content {
+                padding: 10px;
+                background-color: white;
+                display: flex;
+                justify-content: center;
+            }
+
+            .grid-container {
+                display: grid;
+                grid-template-columns: auto auto auto;
+            }
+
+            svg {
+                overflow: visible;
+
+                width: -webkit-fill-available;
+                height: auto;
+            }
+
+            body {
+                max-width: 1000px !important;
+            }
+        </style>
+
+        <script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.0/dist/svg.min.js"></script>
+        <script src="lib/svg.export.js"></script>
+
+        <script src="lib/svg-segmentize.js"></script>
+        <script src="https://unpkg.com/mathjs/lib/browser/math.js"></script>
+
+        <script src="lib/filesize.js"></script>
+        <script src="lib/hull.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    </head>
+    <body>
+        <div style="display: flex;">
+            <h5 id="update_performance" style="margin-right: auto;">23ms</h5>
+            <h5 id="file_size">2.46 GB</h5>
+        </div>
+
+        <div id="content"></div>
+
+        <br>
+
+        <div style="display: flex;">
+            <input type="file" id="file" accept=".svg">
+            <input type="button" onclick="update()" value="update">
+            <input type="button" onclick="download()" value="export">
+            <input type="button" onclick="benchmark()" id="benchmark" value="benchmark">
+        </div>
+
+        <br>
+
+        <div id="categories"></div>
+
+        <script src="settings.js"></script>
+        <script src="main.js"></script>
+    </body>
+</html>

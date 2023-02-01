@@ -8,17 +8,15 @@ import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
 const scene = new THREE.Scene();
 
-const camera = new THREE.PerspectiveCamera(
-	75,
-	window.innerWidth / window.innerHeight,
-	0.1,
-	1000
-);
-camera.position.z = 5;
+const width = 1000;
+const height = 620;
+
+const camera = new THREE.PerspectiveCamera(20, width / height, 0.1, 1000);
+camera.position.z = 15;
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(1000, 620);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 renderer.outputEncoding = THREE.sRGBEncoding;
@@ -33,18 +31,19 @@ scene.add(light);
 // mesh.receiveShadow = true;
 // scene.add(mesh);
 
-new RGBELoader()
-	.setPath('environments/')
-	.load('photo_studio_01_4k.hdr', (texture) => {
-		texture.mapping = THREE.EquirectangularReflectionMapping;
+// new RGBELoader()
+// 	.setPath('environments/')
+// 	.load('photo_studio_01_4k.hdr', (texture) => {
+// 		texture.mapping = THREE.EquirectangularReflectionMapping;
 
-		scene.background = texture;
-		scene.environment = texture;
-	});
+// 		scene.background = texture;
+// 		scene.environment = texture;
+// 	});
 
-document.body.appendChild(renderer.domElement);
+document.getElementById('content').appendChild(renderer.domElement);
 
 let hexagons = [];
+let hexagon_caps = {};
 
 const fbxLoader = new FBXLoader();
 fbxLoader.load(
@@ -65,6 +64,7 @@ fbxLoader.load(
 		object.position.set(-vector.x, -vector.y, -vector.z);
 
 		const hexagrid = object.children[0].children[0];
+		const hexagrid_caps = object.children[1].children[0];
 
 		let rows = [];
 
@@ -108,14 +108,44 @@ fbxLoader.load(
 
 		hexagons = hexagons.reverse();
 
-		for (const [index, hexagon] of Object.entries(hexagons)) {
-			const color = new THREE.Color(index / 128, index / 128, index / 128);
-			hexagon.material = new THREE.MeshStandardMaterial({
-				color: color,
-				emissive: color,
-				emissiveIntensity: 2,
+		for (let cap of hexagrid_caps.children) {
+			const position = new THREE.Vector3();
+			position.setFromMatrixPosition(cap.matrixWorld);
+
+			let hexagons_sorted = [...hexagons].sort((a, b) => {
+				const ap = new THREE.Vector3();
+				ap.setFromMatrixPosition(a.matrixWorld);
+
+				const bp = new THREE.Vector3();
+				bp.setFromMatrixPosition(b.matrixWorld);
+
+				return ap.distanceTo(position) - bp.distanceTo(position);
 			});
+
+			const hexagon = hexagons_sorted[0];
+
+			if (hexagon_caps[hexagon.id] == undefined) hexagon_caps[hexagon.id] = [];
+
+			hexagon_caps[hexagon.id].push(...cap.children[0].children);
 		}
+
+		const default_color = hexagons[0].material.color;
+
+		window.default_color = {
+			r: default_color.r * 255,
+			g: default_color.g * 255,
+			b: default_color.b * 255,
+			a: 0.1,
+		};
+
+		// for (const [index, hexagon] of Object.entries(hexagons)) {
+		// 	const color = new THREE.Color(index / 128, index / 128, index / 128);
+		// 	hexagon.material = new THREE.MeshStandardMaterial({
+		// 		color: color,
+		// 		emissive: color,
+		// 		emissiveIntensity: 2,
+		// 	});
+		// }
 
 		scene.add(object);
 
@@ -135,17 +165,6 @@ fbxLoader.load(
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-window.addEventListener(
-	'resize',
-	() => {
-		camera.aspect = window.innerWidth / window.innerHeight;
-		camera.updateProjectionMatrix();
-		renderer.setSize(window.innerWidth, window.innerHeight);
-		render();
-	},
-	false
-);
-
 // const stats = Stats();
 // document.body.appendChild(stats.dom);
 
@@ -162,6 +181,8 @@ render();
 const electron = require('electron');
 const { SerialPort } = require('serialport');
 const { DelimiterParser } = require('@serialport/parser-delimiter');
+
+const color_blend = require('color-blend');
 
 window.selectArduino = async () => {
 	const ports = await SerialPort.list();
@@ -186,32 +207,41 @@ window.selectArduino = async () => {
 		}
 	);
 
-	const parser = window.serial.pipe(new DelimiterParser({ delimiter: '\n' }));
+	const parser = window.serial.pipe(new DelimiterParser({ delimiter: '\r\n' }));
 
 	parser.on('data', (data) => {
-		const command = data.readUInt8();
+		data = data.toString();
+		data = data.split(',');
 
-		console.log(command);
+		const command = data.shift();
 
-		// data = data.toString();
-		// data = data.split(',');
+		if (command == 'c') {
+			const index = data.shift();
+			const color = color_blend.overlay(window.default_color, {
+				r: parseFloat(data[0]),
+				g: parseFloat(data[1]),
+				b: parseFloat(data[2]),
+				a: 0.9,
+			});
 
-		// const command = data.shift();
+			const hexagon = hexagons[index];
 
-		// if (command == 'c') {
-		// 	const index = data.shift();
-		// 	const color = new THREE.Color(
-		// 		data[0] / 255,
-		// 		data[1] / 255,
-		// 		data[2] / 255
-		// 	);
+			if (hexagon) {
+				const material = new THREE.MeshBasicMaterial({
+					color: new THREE.Color(color.r / 255, color.g / 255, color.b / 255),
+				});
 
-		// 	hexagons[index].material = new THREE.MeshBasicMaterial({
-		// 		color: color,
-		// 	});
-		// } else if (command == 'f') {
-		// 	document.getElementById('fps').innerText = `${data.shift()} fps`;
-		// }
+				if (hexagon_caps[hexagon.id] !== undefined) {
+					for (const cap of hexagon_caps[hexagon.id]) {
+						cap.material = material;
+					}
+				}
+
+				hexagon.material = material;
+			}
+		} else if (command == 'f') {
+			document.getElementById('fps').innerText = `${data.shift()} fps`;
+		}
 	});
 };
 
