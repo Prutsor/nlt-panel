@@ -1,8 +1,10 @@
 #include <FastLED.h>
+#include "uRTCLib.h"
 
 #define NUM_LEDS 128
 
 CRGB leds[NUM_LEDS];
+uRTCLib rtc(0x68);
 
 const int digits[10][10] = { { 1, 2, 3, 5, 8, 10, 11, 12 }, { 2, 5, 7, 10, 12 }, { 1, 2, 5, 7, 6, 8, 11, 12 }, { 1, 2, 5, 7, 6, 10, 12, 10, 11 }, { 1, 3, 6, 7, 5, 10, 12 }, { 1, 2, 3, 6, 7, 10, 11, 12 }, { 2, 4, 6, 7, 8, 11, 12, 10 }, { 1, 2, 5, 7, 9, 11 }, { 1, 2, 3, 5, 6, 7, 8, 10, 11, 12 }, { 1, 2, 3, 5, 6, 7, 9, 11 } };
 const int digit_rows[12][2] = { { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 2, 2 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 4, 2 }, { 5, 0 }, { 5, 1 } };
@@ -13,30 +15,11 @@ void update() {
   for (int index = 0; index < NUM_LEDS; index++) {
     CRGB color = leds[index];
 
-    // byte packet[5];
-
-    // packet[0] = 0x01;
-    // packet[1] = (uint8_t)index;
-    // packet[2] = color.red;
-    // packet[3] = color.green;
-    // packet[4] = color.blue;
-
-    // Serial.write(packet, 5);
-    // Serial.write('\n');
-
     Serial.println((String) "c," + index + "," + color.r + "," + color.g + "," + color.b);
   }
 }
 
 void update_fps() {
-  // byte packet[2];
-
-  // packet[0] = 0x02;
-  // packet[1] = FastLED.getFPS() >> 8;
-
-  // Serial.write(packet, 2);
-  // Serial.write('\n');
-
   Serial.println((String) "f," + FastLED.getFPS());
 }
 
@@ -57,8 +40,24 @@ void render_digit(int offset, int digit[10], CRGB color) {
   }
 }
 
+
+int digit[2] = { 0, 0 };
+void int_to_digit(int time) {
+  if (time > 9) {
+    digit[0] = (time - (time % 10)) / 10;
+    digit[1] = time % 10;
+  } else {
+    digit[0] = 0;
+    digit[1] = time;
+  }
+}
+
 void setup() {
   Serial.begin(921600);
+
+  URTCLIB_WIRE.begin();
+
+  rtc.set(0, 56, 12, 5, 13, 1, 22);
 
   bitClear(ADCSRA, ADPS0);
   bitSet(ADCSRA, ADPS1);
@@ -74,14 +73,22 @@ void loop() {
 
   fill_rainbow(leds, NUM_LEDS, frame, 0);
 
-  render_digit(0, digits[0], CRGB::White);
-  render_digit(4, digits[1], CRGB::White);
+  rtc.refresh();
 
-  render_digit(10, digits[2], CRGB::White);
-  render_digit(14, digits[3], CRGB::White);
+  int_to_digit(rtc.hour());
 
-  leds[44] = CRGB::White;
-  leds[83] = CRGB::White;
+  render_digit(0, digits[digit[0]], CRGB::White);
+  render_digit(4, digits[digit[1]], CRGB::White);
+
+  int_to_digit(rtc.minute());
+
+  render_digit(10, digits[digit[0]], CRGB::White);
+  render_digit(14, digits[digit[1]], CRGB::White);
+
+  if (frame % 2 == 0) {
+    leds[44] = CRGB::White;
+    leds[83] = CRGB::White;
+  }
 
   FastLED.show();
 
