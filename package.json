@@ -19,10 +19,11 @@
 	"homepage": "https://github.com/Prutsor/nlt-panel#readme",
 	"dependencies": {
 		"@serialport/parser-delimiter": "^10.5.0",
+		"@yesbotics/simple-serial-protocol-node": "^2.2.0",
 		"color-blend": "^4.0.0",
 		"electron": "^22.1.0",
 		"electron-prompt": "^1.7.0",
 		"five-server": "^0.1.9",
-		"serialport": "^10.5.0"
+		"serialport": "latest"
 	}
 }

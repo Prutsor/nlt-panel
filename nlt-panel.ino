@@ -1,5 +1,6 @@
 #include <FastLED.h>
 #include "uRTCLib.h"
+#include "Arduino.h"
 
 #define NUM_LEDS 128
 
@@ -57,7 +58,7 @@ void setup() {
 
   URTCLIB_WIRE.begin();
 
-  rtc.set(0, 56, 12, 5, 13, 1, 22);
+  // rtc.set(0, 56, 12, 5, 13, 1, 22);
 
   bitClear(ADCSRA, ADPS0);
   bitSet(ADCSRA, ADPS1);
@@ -67,6 +68,14 @@ void setup() {
 int frame = 0;
 
 void loop() {
+  if (Serial.available() > 0) {
+    String incomingString = Serial.readStringUntil('\n');
+
+    // prints the received data
+    Serial.print("I received: ");
+    Serial.println(incomingString);
+  }
+
   frame++;
   if (frame >= 255)
     frame = 0;
@@ -85,7 +94,7 @@ void loop() {
   render_digit(10, digits[digit[0]], CRGB::White);
   render_digit(14, digits[digit[1]], CRGB::White);
 
-  if (frame % 2 == 0) {
+  if (rtc.second() % 2 == 0) {
     leds[44] = CRGB::White;
     leds[83] = CRGB::White;
   }
@@ -95,4 +104,6 @@ void loop() {
   // if (frame % 10 == 0) update();
   update();
   update_fps();
+
+  delay(500);
 }
