@@ -130,6 +130,7 @@ fbxLoader.load(
 		}
 
 		const default_color = hexagons[0].material.color;
+		window.default_material = hexagons[0].material.clone();
 
 		window.default_color = {
 			r: default_color.r * 255,
@@ -182,6 +183,12 @@ const electron = require('electron');
 const { SerialPort } = require('serialport');
 const { DelimiterParser } = require('@serialport/parser-delimiter');
 
+const {
+	SimpleSerialProtocol,
+	WriteCommandConfig,
+	ReadCommandConfig,
+} = require('@yesbotics/simple-serial-protocol-node');
+
 const color_blend = require('color-blend');
 
 window.selectArduino = async () => {
@@ -193,40 +200,28 @@ window.selectArduino = async () => {
 		);
 	});
 
-	window.serial = new SerialPort(
-		{
-			path: port.path,
-			baudRate: 921600,
-			dataBits: 8,
-			stopBits: 1,
-		},
-		(err) => {
-			if (err) console.log(err);
+	if (window.arduino) location.reload();
 
-			if (!err) console.log('connected to', port.path);
-		}
+	window.arduino = new SimpleSerialProtocol(port.path, 115200);
+
+	window.arduino.registerCommand(
+		new ReadCommandConfig('f', (fps) => {
+			if (window.debug) document.getElementById('fps').innerText = `${fps} fps`;
+		}).addUInt16Param()
 	);
 
-	const parser = window.serial.pipe(new DelimiterParser({ delimiter: '\r\n' }));
+	window.arduino.registerCommand(
+		new ReadCommandConfig('c', (i, r, g, b) => {
+			const hexagon = hexagons[i];
 
-	parser.on('data', (data) => {
-		data = data.toString();
-		data = data.split(',');
+			if (hexagon && window.debug) {
+				const color = color_blend.overlay(window.default_color, {
+					r,
+					b,
+					g,
+					a: 0.9,
+				});
 
-		const command = data.shift();
-
-		if (command == 'c') {
-			const index = data.shift();
-			const color = color_blend.overlay(window.default_color, {
-				r: parseFloat(data[0]),
-				g: parseFloat(data[1]),
-				b: parseFloat(data[2]),
-				a: 0.9,
-			});
-
-			const hexagon = hexagons[index];
-
-			if (hexagon) {
 				const material = new THREE.MeshBasicMaterial({
 					color: new THREE.Color(color.r / 255, color.g / 255, color.b / 255),
 				});
@@ -239,14 +234,72 @@ window.selectArduino = async () => {
 
 				hexagon.material = material;
 			}
-		} else if (command == 'f') {
-			document.getElementById('fps').innerText = `${data.shift()} fps`;
-		}
-	});
+		})
+			.addUInt8Param()
+			.addUInt8Param()
+			.addUInt8Param()
+			.addUInt8Param()
+	);
+
+	window.arduino
+		.init(2000)
+		.catch((err) => {
+			console.error('Could not init connection. reason:', err);
+		})
+		.then(() => {
+			console.log('Arduino connected.');
+
+			window.enableDebug = () => {
+				window.debug = true;
+
+				arduino.writeCommand(new WriteCommandConfig('d').addBooleanValue(true));
+			};
+
+			window.disableDebug = () => {
+				window.debug = false;
+
+				arduino.writeCommand(
+					new WriteCommandConfig('d').addBooleanValue(false)
+				);
+
+				document.getElementById('fps').innerText = `- fps`;
+
+				for (const hexagon of hexagons) {
+					const material = window.default_material;
+
+					if (hexagon_caps[hexagon.id] !== undefined) {
+						for (const cap of hexagon_caps[hexagon.id]) {
+							cap.material = material;
+						}
+					}
+
+					hexagon.material = material;
+				}
+			};
+
+			window.setTime = () => {
+				// rtc.set(second, minute, hour, dayOfWeek, dayOfMonth, month, year);
+
+				const date = new Date(Date.now());
+
+				arduino.writeCommand(
+					new WriteCommandConfig('t')
+						.addUInt8Value(date.getSeconds())
+						.addUInt8Value(date.getMinutes())
+						.addUInt8Value(date.getHours())
+						.addUInt8Value(date.getDay())
+						.addUInt8Value(date.getDate())
+						.addUInt8Value(date.getMonth())
+						.addUInt8Value(date.getFullYear() - 2000)
+				);
+			};
+		});
 };
 
-window.onbeforeunload = () => {
-	if (window.serial !== undefined && window.serial.isOpen == true) {
-		window.serial.close();
-	}
-};
+// window.onbeforeunload = async () => {
+// 	try {
+// 		if (window.arduino.isOpen()) await window.arduino.dispose();
+// 	} catch (e) {
+// 		console.log(e);
+// 	}
+// };

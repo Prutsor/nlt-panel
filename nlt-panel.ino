@@ -1,4 +1,6 @@
 #include <FastLED.h>
+#include <SimpleSerialProtocol.h>
+
 #include "uRTCLib.h"
 #include "Arduino.h"
 
@@ -6,6 +8,17 @@
 
 CRGB leds[NUM_LEDS];
 uRTCLib rtc(0x68);
+
+const long BAUDRATE = 115200;        // speed of serial connection
+const long CHARACTER_TIMEOUT = 500;  // wait max 500 ms between single chars to be received
+
+const float BACKGROUND_SPEED = 5;
+
+void onError(uint8_t errorNum);
+void onSetTime();
+void onSetDebug();
+
+SimpleSerialProtocol ssp(Serial, BAUDRATE, CHARACTER_TIMEOUT, onError, 'a', 'z');
 
 const int digits[10][10] = { { 1, 2, 3, 5, 8, 10, 11, 12 }, { 2, 5, 7, 10, 12 }, { 1, 2, 5, 7, 6, 8, 11, 12 }, { 1, 2, 5, 7, 6, 10, 12, 10, 11 }, { 1, 3, 6, 7, 5, 10, 12 }, { 1, 2, 3, 6, 7, 10, 11, 12 }, { 2, 4, 6, 7, 8, 11, 12, 10 }, { 1, 2, 5, 7, 9, 11 }, { 1, 2, 3, 5, 6, 7, 8, 10, 11, 12 }, { 1, 2, 3, 5, 6, 7, 9, 11 } };
 const int digit_rows[12][2] = { { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 2, 2 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 4, 2 }, { 5, 0 }, { 5, 1 } };
@@ -16,12 +29,23 @@ void update() {
   for (int index = 0; index < NUM_LEDS; index++) {
     CRGB color = leds[index];
 
-    Serial.println((String) "c," + index + "," + color.r + "," + color.g + "," + color.b);
+    ssp.writeCommand('c');
+
+    ssp.writeUnsignedInt8(index);
+    ssp.writeUnsignedInt8(color.r);
+    ssp.writeUnsignedInt8(color.g);
+    ssp.writeUnsignedInt8(color.b);
+
+    ssp.writeEot();
   }
 }
 
 void update_fps() {
-  Serial.println((String) "f," + FastLED.getFPS());
+  ssp.writeCommand('f');
+
+  ssp.writeUnsignedInt16(FastLED.getFPS());
+
+  ssp.writeEot();
 }
 
 void render_digit(int offset, int digit[10], CRGB color) {
@@ -54,33 +78,32 @@ void int_to_digit(int time) {
 }
 
 void setup() {
-  Serial.begin(921600);
+  ssp.init();
 
   URTCLIB_WIRE.begin();
 
-  // rtc.set(0, 56, 12, 5, 13, 1, 22);
+  ssp.registerCommand('t', onSetTime);
+  ssp.registerCommand('d', onSetDebug);
 
-  bitClear(ADCSRA, ADPS0);
-  bitSet(ADCSRA, ADPS1);
-  bitClear(ADCSRA, ADPS2);
+  // bitClear(ADCSRA, ADPS0);
+  // bitSet(ADCSRA, ADPS1);
+  // bitClear(ADCSRA, ADPS2);
 }
 
-int frame = 0;
+float hue = 0;
+bool debug = false;
 
 void loop() {
-  if (Serial.available() > 0) {
-    String incomingString = Serial.readStringUntil('\n');
+  ssp.loop();
 
-    // prints the received data
-    Serial.print("I received: ");
-    Serial.println(incomingString);
+  float delta = (float)1 / (float)FastLED.getFPS();  // tijd gebruiken????
+  hue = hue + (delta * BACKGROUND_SPEED);
+
+  if (hue >= 255) {
+    hue = 0;
   }
 
-  frame++;
-  if (frame >= 255)
-    frame = 0;
-
-  fill_rainbow(leds, NUM_LEDS, frame, 0);
+  fill_rainbow(leds, NUM_LEDS, round(hue), 0);
 
   rtc.refresh();
 
@@ -101,9 +124,32 @@ void loop() {
 
   FastLED.show();
 
-  // if (frame % 10 == 0) update();
-  update();
-  update_fps();
-
-  delay(500);
+  if (debug == true) {
+    update();
+    update_fps();
+  }
 }
+
+void onError(uint8_t errorNum) {
+  digitalWrite(LED_BUILTIN, HIGH);
+}
+
+void onSetTime() {
+  uint8_t second = ssp.readUnsignedInt8();
+  uint8_t minute = ssp.readUnsignedInt8();
+  uint8_t hour = ssp.readUnsignedInt8();
+  uint8_t dayOfWeek = ssp.readUnsignedInt8();
+  uint8_t dayOfMonth = ssp.readUnsignedInt8();
+  uint8_t month = ssp.readUnsignedInt8();
+  uint8_t year = ssp.readUnsignedInt8();
+
+  rtc.set(second, minute, hour, dayOfWeek, dayOfMonth, month, year);
+
+  ssp.readEot();
+};
+
+void onSetDebug() {
+  debug = ssp.readBool();
+
+  ssp.readEot();
+};

@@ -1,5 +1,4 @@
 const {
-	Baudrate,
 	SimpleSerialProtocol,
 	WriteCommandConfig,
 	ReadCommandConfig,
@@ -8,7 +7,7 @@ const {
 const baudrate = 9600;
 const port = 'COM3';
 
-const arduino = new SimpleSerialProtocol();
+const arduino = new SimpleSerialProtocol(port, baudrate);
 
 arduino.registerCommand(
 	new ReadCommandConfig('c', (r, g, b) => {
