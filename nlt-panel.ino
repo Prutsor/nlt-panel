@@ -4,11 +4,11 @@
 #include "uRTCLib.h"
 #include "Arduino.h"
 
-// @version 2.2.0
+// @version 2.2.1
 
 const uint8_t MAJOR = 2;
 const uint8_t MINOR = 2;
-const uint8_t PATCH = 0;
+const uint8_t PATCH = 1;
 
 #define NUM_LEDS 128
 
@@ -23,6 +23,7 @@ const float BACKGROUND_SPEED = 5;
 void onError(uint8_t errorNum);
 void onSetTime();
 void onSetDebug();
+void onShowVersion();
 void onReady();
 
 SimpleSerialProtocol ssp(Serial, BAUDRATE, CHARACTER_TIMEOUT, onError, 'a', 'z');
@@ -163,6 +164,9 @@ void setup() {
   ssp.registerCommand('r', onReady);
   ssp.registerCommand('t', onSetTime);
   ssp.registerCommand('d', onSetDebug);
+  ssp.registerCommand('v', onShowVersion);
+
+  FastLED.addLeds<NEOPIXEL, 6>(leds, NUM_LEDS);
 
   bitClear(ADCSRA, ADPS0);
   bitSet(ADCSRA, ADPS1);
@@ -171,7 +175,9 @@ void setup() {
 
 float hue = 0;
 int frame = 0;
+
 bool debug = false;
+bool show_version = false;
 
 void loop() {
   ssp.loop();
@@ -192,27 +198,28 @@ void loop() {
 
   rtc.refresh();
 
-  int_to_digit(rtc.hour());
+  if (show_version) {
+    render_version();
+  } else {
+    int_to_digit(rtc.hour());
 
-  render_digit(0, digits[digit[0]], CRGB::White);
-  render_digit(4, digits[digit[1]], CRGB::White);
+    render_digit(0, digits[digit[0]], CRGB::White);
+    render_digit(4, digits[digit[1]], CRGB::White);
 
-  int_to_digit(rtc.minute());
+    int_to_digit(rtc.minute());
 
-  render_digit(10, digits[digit[0]], CRGB::White);
-  render_digit(14, digits[digit[1]], CRGB::White);
+    render_digit(10, digits[digit[0]], CRGB::White);
+    render_digit(14, digits[digit[1]], CRGB::White);
 
-  // int_to_digit(frame % 26);
+    // int_to_digit(frame % 26);
 
-  // render_character(12, characters[frame % 26], CRGB::White);
+    // render_character(12, characters[frame % 26], CRGB::White);
+    // render_character(8, characters[digit[0]], CRGB::White);
 
-  // render_character(8, characters[digit[0]], CRGB::White);
-
-  // render_version();
-
-  if (rtc.second() % 2 == 0) {
-    leds[44] = CRGB::White;
-    leds[83] = CRGB::White;
+    if (rtc.second() % 2 == 0) {
+      leds[44] = CRGB::White;
+      leds[83] = CRGB::White;
+    }
   }
 
   FastLED.show();
@@ -258,6 +265,12 @@ void onSetTime() {
 
   ssp.readEot();
 };
+
+void onShowVersion() {
+  show_version = true;
+
+  ssp.readEot();
+}
 
 void onSetDebug() {
   debug = ssp.readBool();

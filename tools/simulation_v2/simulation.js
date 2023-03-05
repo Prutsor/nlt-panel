@@ -2,11 +2,11 @@ const button_debug = document.getElementById('button_debug');
 const button_connect = document.getElementById('button_connect');
 const button_time = document.getElementById('button_time');
 
-// @version 2.2.0
+// @version 2.2.1
 
 const MAJOR = 2;
 const MINOR = 2;
-const PATCH = 0;
+const PATCH = 1;
 
 document.getElementById(
 	'info_version_software'
@@ -128,6 +128,24 @@ button_connect.onclick = async (event) => {
 				})
 				.then(() => {
 					console.log('Arduino connected.');
+
+					window.export = () => {
+						arduino.writeCommand(new WriteCommandConfig('v'));
+
+						setTimeout(() => {
+							document.querySelector('#content > canvas').toBlob((blob) => {
+								const link = URL.createObjectURL(blob);
+								const a = document.createElement('a');
+
+								a.setAttribute('download', 'header.png');
+								a.setAttribute('href', link);
+
+								document.body.appendChild(a);
+								a.click();
+								document.body.removeChild(a);
+							});
+						}, 500);
+					};
 
 					button_debug.onclick = () => {
 						menu_load(button_debug);
