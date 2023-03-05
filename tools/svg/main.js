@@ -568,7 +568,7 @@ const run = async () => {
 	const stroke_category = create_settings_category('strokes');
 	create_setting(stroke_category, 'select', 'linecap', {
 		choices: ['butt', 'round', 'square'],
-		selectedIndex: 1,
+		selectedIndex: 2,
 	});
 	create_setting(stroke_category, 'range', 'width', {
 		min: 0,
