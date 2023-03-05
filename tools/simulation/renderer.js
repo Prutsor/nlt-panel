@@ -139,15 +139,6 @@ fbxLoader.load(
 			a: 0.1,
 		};
 
-		// for (const [index, hexagon] of Object.entries(hexagons)) {
-		// 	const color = new THREE.Color(index / 128, index / 128, index / 128);
-		// 	hexagon.material = new THREE.MeshStandardMaterial({
-		// 		color: color,
-		// 		emissive: color,
-		// 		emissiveIntensity: 2,
-		// 	});
-		// }
-
 		scene.add(object);
 
 		console.log('loaded panel.fbx');
@@ -262,7 +253,7 @@ window.selectArduino = async () => {
 					new WriteCommandConfig('d').addBooleanValue(false)
 				);
 
-				document.getElementById('fps').innerText = `- fps`;
+				document.getElementById('fps').innerText = `- FPS`;
 
 				for (const hexagon of hexagons) {
 					const material = window.default_material;

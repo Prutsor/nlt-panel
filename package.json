@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "tools/simulation/main.js",
 	"scripts": {
-		"tools.sim": "electron .",
+		"tools.sim": "electron tools/simulation_v2/main",
 		"tools.svg": "five-server"
 	},
 	"repository": {

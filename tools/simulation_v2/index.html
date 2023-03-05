@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+    <html lang="en" data-theme="business">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.2/dist/full.css" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+
+    <input type="checkbox" id="select-modal" class="modal-toggle" />
+    <label for="select-modal" class="modal cursor-pointer">
+        <label class="modal-box relative p-4" for="">
+            <h3 class="font-bold text-lg">Select a port</h3>
+
+            <ul id="port-list" class="menu bg-base-100 w-full pt-4"></ul>
+        </label>
+    </label>
+
+    <body class="flex justify-center">
+        <div class="max-w-5xl w-full p-4">
+            <div class="flex w-full max-h-12">
+                <ul class="menu menu-horizontal bg-base-100 rounded-box"><li><a id="fps">- FPS</a></li></ul>
+                <ul class="menu menu-horizontal bg-base-100 rounded-box ml-auto">
+                    <li>
+                        <label for="select-modal" id="button_connect">
+                            <div class="hidden indicator h-3 w-3 rounded-full border-2 border-t-transparent border-r-transparent border-b-current border-l-current animate-spin"></div>
+                            Connect
+                        </label>
+                    </li>
+                    <li>
+                        <a id="button_debug">
+                            <div class="hidden indicator h-3 w-3 rounded-full border-2 border-t-transparent border-r-transparent border-b-current border-l-current animate-spin"></div>
+                            Debug
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="content" class="flex w-full justify-center pt-4"></div>
+
+            <div class="flex w-full justify-center gap-4 pt-4">
+                <div class="card p-4 bg-base-200 w-full shadow-xl">
+                    <p class="font-bold text-lg">Information</p>
+                    
+                    <ul class="pt-4">
+                        <li class="flex">
+                            <p class="font-semibold text-base">Arduino version</p>
+                            <p class="font-normal text-base ml-auto" id="info_version_arduino">-</p>
+                        </li>
+                        <li class="flex">
+                            <p class="font-semibold text-base">Software version</p>
+                            <p class="font-normal text-base ml-auto" id="info_version_software">-</p>
+                        </li>
+                        <li class="flex">
+                            <p class="font-semibold text-base">Debug</p>
+                            <p class="font-normal text-base ml-auto" id="info_debug">false</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card p-4 bg-base-200 w-full shadow-xl">
+                    <p class="font-bold text-lg">Configuration</p>
+
+                    <ul class="pt-4">
+                        <li class="flex">
+                            <p class="font-semibold text-base">Time</p>
+                            <button class="btn btn-xs ml-auto" id="button_time">Set</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "https://threejs.org/build/three.module.js",
+                    "three/addons/": "https://threejs.org/examples/jsm/"
+                }
+            }
+        </script>
+
+        <script type="module" src="./renderer.js"></script>
+        <script src="./simulation.js"></script>
+    </body>
+</html>
