@@ -11,7 +11,11 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(20, width / height, 0.1, 1000);
 camera.position.z = 15;
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({
+	antialias: true,
+	preserveDrawingBuffer: true,
+});
+
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(width, height);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -48,6 +52,8 @@ fbxLoader.load(
 
 		const hexagrid = object.children[0].children[0];
 		const hexagrid_caps = object.children[1].children[0];
+
+		object.children[2].position.set(1000, 0, 0);
 
 		let rows = [];
 

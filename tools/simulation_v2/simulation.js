@@ -2,10 +2,10 @@ const button_debug = document.getElementById('button_debug');
 const button_connect = document.getElementById('button_connect');
 const button_time = document.getElementById('button_time');
 
-// @version 2.1.0
+// @version 2.2.0
 
 const MAJOR = 2;
-const MINOR = 1;
+const MINOR = 2;
 const PATCH = 0;
 
 document.getElementById(

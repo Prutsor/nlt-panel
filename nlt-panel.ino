@@ -4,10 +4,10 @@
 #include "uRTCLib.h"
 #include "Arduino.h"
 
-// @version 2.1.0
+// @version 2.2.0
 
 const uint8_t MAJOR = 2;
-const uint8_t MINOR = 1;
+const uint8_t MINOR = 2;
 const uint8_t PATCH = 0;
 
 #define NUM_LEDS 128
@@ -110,6 +110,51 @@ void int_to_digit(int time) {
   }
 }
 
+void render_version() {
+  int offset = 14;
+
+  if (PATCH < 10) {
+    render_digit(offset, digits[PATCH], CRGB::White);
+
+    offset -= 5;
+  } else {
+    int_to_digit(PATCH);
+
+    render_digit(offset, digits[digit[1]], CRGB::White);
+    offset -= 4;
+    render_digit(offset, digits[digit[0]], CRGB::White);
+    offset -= 5;
+  }
+
+  leds[rows[5] - offset - 3] = CRGB::White;
+
+  if (MINOR < 10) {
+    render_digit(offset, digits[MINOR], CRGB::White);
+
+    offset -= 5;
+  } else {
+    int_to_digit(MINOR);
+
+    render_digit(offset, digits[digit[1]], CRGB::White);
+    offset -= 4;
+    render_digit(offset, digits[digit[0]], CRGB::White);
+    offset -= 5;
+  }
+
+  leds[rows[5] - offset - 3] = CRGB::White;
+
+  if (MAJOR < 10) {
+    render_digit(offset, digits[MAJOR], CRGB::White);
+  } else {
+    int_to_digit(MAJOR);
+
+    render_digit(offset, digits[digit[1]], CRGB::White);
+    offset -= 4;
+    render_digit(offset, digits[digit[0]], CRGB::White);
+    offset -= 5;
+  }
+}
+
 void setup() {
   ssp.init();
 
@@ -159,12 +204,11 @@ void loop() {
 
   // int_to_digit(frame % 26);
 
-  // render_digit(0, digits[digit[0]], CRGB::White);
-  // render_digit(4, digits[digit[1]], CRGB::White);
-
   // render_character(12, characters[frame % 26], CRGB::White);
 
   // render_character(8, characters[digit[0]], CRGB::White);
+
+  // render_version();
 
   if (rtc.second() % 2 == 0) {
     leds[44] = CRGB::White;
