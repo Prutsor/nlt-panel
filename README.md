@@ -46,11 +46,11 @@ De volgende stap in het project is het lasersnijden van de houten plaat. Om het 
 
 Om de LED-strips op de plaat te bevestigen, moet je de strip in vijf delen knippen: 2x17, 2x18, 2x19 en 1x20 LED's. Het is belangrijk om ze op de juiste manier op de plaat te plaatsen om ervoor te zorgen dat ze goed werken. Hieronder vind je de juiste richtingen voor het plaatsen van de LED-strips op de plaat.
 
-![led-richting.png](/design/led-richting.png 'Richting van de LED-strips')
+![led-richting.png](/instructions/led-richting.png 'Richting van de LED-strips')
 
 Je moet de LED-strips aan elkaar solderen zoals aangegeven in de onderstaande afbeelding. Het is belangrijk om ervoor te zorgen dat de polariteit van de LED-strips correct is aangesloten om schade aan de strips te voorkomen.
 
-![led-solderen.png](/design/led-solderen.png 'Solderen van de LED-strips')
+![led-solderen.png](/instructions/led-solderen.png 'Solderen van de LED-strips')
 
 <details>
   <summary>Testen van de LED-strips</summary>
