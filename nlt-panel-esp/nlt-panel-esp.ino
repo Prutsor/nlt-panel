@@ -6,7 +6,7 @@
 
 #define NUM_LEDS 128
 
-const float BACKGROUND_SPEED = 5;
+const float BACKGROUND_SPEED = 2500;
 
 const char *ssid = "fortnite";
 const char *password = "fortnitre33";
@@ -68,15 +68,19 @@ void int_to_digit(int time) {
   }
 }
 
-unsigned long hue = 0;
+float hue = 0;
 int frame = 0;
+
+unsigned long last_millis = 0;
 
 void loop() {
   time_client.update();
 
-  unsigned long delta = 1 / millis();
+  float delta = 1 / ((float)millis() / (float)last_millis);
   hue = hue + (delta * BACKGROUND_SPEED);
   frame = frame + 1;
+
+  last_millis = millis();
 
   if (hue >= 65535) {
     hue = 0;
