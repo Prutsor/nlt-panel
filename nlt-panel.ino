@@ -4,6 +4,8 @@
 #include "uRTCLib.h"
 #include "Arduino.h"
 
+#include <PGMWrap.h>
+
 // @version 2.2.1
 
 const uint8_t MAJOR = 2;
@@ -28,21 +30,23 @@ void onReady();
 
 SimpleSerialProtocol ssp(Serial, BAUDRATE, CHARACTER_TIMEOUT, onError, 'a', 'z');
 
-const int digits[10][10] = { { 1, 2, 3, 5, 8, 10, 11, 12 }, { 2, 5, 7, 10, 12 }, { 1, 2, 5, 7, 6, 8, 11, 12 }, { 1, 2, 5, 7, 6, 10, 12, 10, 11 }, { 1, 3, 6, 7, 5, 10, 12 }, { 1, 2, 3, 6, 7, 10, 11, 12 }, { 2, 4, 6, 7, 8, 11, 12, 10 }, { 1, 2, 5, 7, 9, 11 }, { 1, 2, 3, 5, 6, 7, 8, 10, 11, 12 }, { 1, 2, 3, 5, 6, 7, 9, 11 } };
-const int digit_rows[12][2] = { { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 2, 2 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 4, 2 }, { 5, 0 }, { 5, 1 } };
+const int PROGMEM digits[10][10] = {{1, 2, 3, 5, 8, 10, 11, 12}, {2, 5, 7, 10, 12}, {1, 2, 5, 7, 6, 8, 11, 12}, {1, 2, 5, 7, 6, 10, 12, 10, 11}, {1, 3, 6, 7, 5, 10, 12}, {1, 2, 3, 6, 7, 10, 11, 12}, {2, 4, 6, 7, 8, 11, 12, 10}, {1, 2, 5, 7, 9, 11}, {1, 2, 3, 5, 6, 7, 8, 10, 11, 12}, {1, 2, 3, 5, 6, 7, 9, 11}};
+const int PROGMEM digit_rows[12][2] = {{1, 0}, {1, 1}, {2, 0}, {2, 1}, {2, 2}, {3, 0}, {3, 1}, {4, 0}, {4, 1}, {4, 2}, {5, 0}, {5, 1}};
 
 // { 1, 2, 3, 4, 6, 7, 9, 10, 12, 13, 14, 15 }
-const int characters[26][13] = { { 1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 15 }, { 1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15 }, { 1, 2, 3, 4, 7, 10, 13, 14, 15 }, { 1, 2, 4, 6, 7, 9, 10, 12, 13, 14, 15 }, { 1, 2, 3, 4, 7, 8, 10, 13 }, { 1, 2, 3, 4, 7, 9, 10, 12, 13, 14, 15 }, { 1, 3, 4, 6, 7, 8, 9, 10, 12, 13, 15 }, { 1, 2, 3, 5, 8, 11, 13, 14, 15 }, { 3, 6, 9, 10, 12, 13, 14, 15 }, { 1, 3, 4, 6, 7, 8, 10, 12, 13, 15 }, { 1, 4, 7, 10, 13, 14, 15 }, { 1, 2, 3, 4, 5, 6, 7, 9, 10, 12, 13, 15 }, { 3, 4, 6, 7, 8, 9, 10, 12, 13 }, { 1, 2, 3, 4, 6, 7, 9, 10, 12, 13, 14, 15 }, { 1, 2, 3, 4, 6, 7, 8, 9, 10, 13 }, { 1, 2, 3, 4, 6, 7, 9, 10, 12, 13, 14, 15, 16 }, { 1, 2, 4, 6, 7, 8, 10, 13, 12, 15 }, { 1, 2, 3, 4, 7, 8, 9, 12, 13, 14, 15 }, { 1, 2, 3, 5, 8, 11, 14 }, { 1, 3, 4, 6, 7, 9, 10, 12, 13, 14, 15 }, { 1, 3, 4, 6, 7, 9, 10, 12, 14 }, { 1, 3, 4, 6, 7, 9, 10, 11, 12, 13, 15 }, { 1, 3, 4, 6, 8, 10, 12, 13, 15 }, { 1, 3, 4, 6, 8, 11, 14 }, { 1, 2, 3, 6, 8, 10, 13, 14, 15 } };
-const int character_rows[16][4] = { { 1, 0, 0, 0 }, { 1, 1, 0, 0 }, { 1, 2, 0, 0 }, { 2, 0, 1, 1 }, { 2, 1, 1, 1 }, { 2, 2, 1, 1 }, { 3, 0, 1, 1 }, { 3, 1, 1, 1 }, { 3, 2, 1, 1 }, { 4, 0, 2, 0 }, { 4, 1, 2, 0 }, { 4, 2, 2, 0 }, { 5, 0, 2, 0 }, { 5, 1, 2, 0 }, { 5, 2, 2, 0 }, { 6, 2, 3, 0 } };
+const int PROGMEM characters[26][13] = {{1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 15}, {1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15}, {1, 2, 3, 4, 7, 10, 13, 14, 15}, {1, 2, 4, 6, 7, 9, 10, 12, 13, 14, 15}, {1, 2, 3, 4, 7, 8, 10, 13}, {1, 2, 3, 4, 7, 9, 10, 12, 13, 14, 15}, {1, 3, 4, 6, 7, 8, 9, 10, 12, 13, 15}, {1, 2, 3, 5, 8, 11, 13, 14, 15}, {3, 6, 9, 10, 12, 13, 14, 15}, {1, 3, 4, 6, 7, 8, 10, 12, 13, 15}, {1, 4, 7, 10, 13, 14, 15}, {1, 2, 3, 4, 5, 6, 7, 9, 10, 12, 13, 15}, {3, 4, 6, 7, 8, 9, 10, 12, 13}, {1, 2, 3, 4, 6, 7, 9, 10, 12, 13, 14, 15}, {1, 2, 3, 4, 6, 7, 8, 9, 10, 13}, {1, 2, 3, 4, 6, 7, 9, 10, 12, 13, 14, 15, 16}, {1, 2, 4, 6, 7, 8, 10, 13, 12, 15}, {1, 2, 3, 4, 7, 8, 9, 12, 13, 14, 15}, {1, 2, 3, 5, 8, 11, 14}, {1, 3, 4, 6, 7, 9, 10, 12, 13, 14, 15}, {1, 3, 4, 6, 7, 9, 10, 12, 14}, {1, 3, 4, 6, 7, 9, 10, 11, 12, 13, 15}, {1, 3, 4, 6, 8, 10, 12, 13, 15}, {1, 3, 4, 6, 8, 11, 14}, {1, 2, 3, 6, 8, 10, 13, 14, 15}};
+const int PROGMEM character_rows[16][4] = {{1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2}, {3, 0}, {3, 1}, {3, 2}, {4, 0}, {4, 1}, {4, 2}, {5, 0}, {5, 1}, {5, 2}, {6, 2}};
 
 const int character_direction = 3;
 // 3 = ltr (left to right)
 // 2 = rtl (right to left) (werkt niet misclick)
 
-const int rows[7] = { 0, 33, 36, 71, 75, 109, 111 };
+const int PROGMEM rows[7] = {0, 33, 36, 71, 75, 109, 111};
 
-void update() {
-  for (int index = 0; index < NUM_LEDS; index++) {
+void update()
+{
+  for (int index = 0; index < NUM_LEDS; index++)
+  {
     CRGB color = leds[index];
 
     ssp.writeCommand('c');
@@ -56,7 +60,8 @@ void update() {
   }
 }
 
-void update_fps() {
+void update_fps()
+{
   ssp.writeCommand('f');
 
   ssp.writeUnsignedInt16(FastLED.getFPS());
@@ -64,61 +69,77 @@ void update_fps() {
   ssp.writeEot();
 }
 
-void render_character(int offset, int character[13], CRGB color) {
-  for (int i = 0; i < 13; i++) {
-    int pixel = character[i];
+void render_digit(int offset, int digit[10], CRGB color)
+{
+  for (int i = 0; i < 10; i++)
+  {
+    if (digit[i] > 0)
+    {
+      int row = digit_rows[digit[i] - 1][0];
+      int index = digit_rows[digit[i] - 1][1];
 
-    if (pixel > 0) {
-      int row = character_rows[pixel - 1][0];
-      int index = character_rows[pixel - 1][1];
-      // int row_offset = character_rows[pixel - 1][character_direction];
-      int row_offset = 0;
-
-      if (row % 2 == 0) {
-        leds[rows[row] + index + offset + row_offset] = color;
-      } else {
-        leds[rows[row] - index - offset - row_offset] = color;
-      }
-    }
-  }
-}
-
-void render_digit(int offset, int digit[10], CRGB color) {
-  for (int i = 0; i < 10; i++) {
-    int pixel = digit[i];
-
-    if (pixel > 0) {
-      int row = digit_rows[pixel - 1][0];
-      int index = digit_rows[pixel - 1][1];
-
-      if (row % 2 == 0) {
+      if (row % 2 == 0)
+      {
         leds[rows[row] + index + offset] = color;
-      } else {
+      }
+      else
+      {
         leds[rows[row] - index - offset] = color;
       }
     }
   }
 }
 
-int digit[2] = { 0, 0 };
-void int_to_digit(int time) {
-  if (time > 9) {
+int digit[2] = {0, 0};
+void int_to_digit(int time)
+{
+  if (time > 9)
+  {
     digit[0] = (time - (time % 10)) / 10;
     digit[1] = time % 10;
-  } else {
+  }
+  else
+  {
     digit[0] = 0;
     digit[1] = time;
   }
 }
 
-void render_version() {
+void render_character(int offset, int character[13], CRGB color)
+{
+  for (int i = 0; i < 13; i++)
+  {
+    if (character[i] > 0)
+    {
+      int row = character_rows[character[i] - 1][0];
+      int index = character_rows[character[i] - 1][1];
+      // int row_offset = character_rows[pixel - 1][character_direction];
+      int row_offset = 0;
+
+      if (row % 2 == 0)
+      {
+        leds[rows[row] + index + offset + row_offset] = color;
+      }
+      else
+      {
+        leds[rows[row] - index - offset - row_offset] = color;
+      }
+    }
+  }
+}
+
+void render_version()
+{
   int offset = 14;
 
-  if (PATCH < 10) {
+  if (PATCH < 10)
+  {
     render_digit(offset, digits[PATCH], CRGB::White);
 
     offset -= 5;
-  } else {
+  }
+  else
+  {
     int_to_digit(PATCH);
 
     render_digit(offset, digits[digit[1]], CRGB::White);
@@ -129,11 +150,14 @@ void render_version() {
 
   leds[rows[5] - offset - 3] = CRGB::White;
 
-  if (MINOR < 10) {
+  if (MINOR < 10)
+  {
     render_digit(offset, digits[MINOR], CRGB::White);
 
     offset -= 5;
-  } else {
+  }
+  else
+  {
     int_to_digit(MINOR);
 
     render_digit(offset, digits[digit[1]], CRGB::White);
@@ -144,9 +168,12 @@ void render_version() {
 
   leds[rows[5] - offset - 3] = CRGB::White;
 
-  if (MAJOR < 10) {
+  if (MAJOR < 10)
+  {
     render_digit(offset, digits[MAJOR], CRGB::White);
-  } else {
+  }
+  else
+  {
     int_to_digit(MAJOR);
 
     render_digit(offset, digits[digit[1]], CRGB::White);
@@ -156,10 +183,17 @@ void render_version() {
   }
 }
 
-void setup() {
+bool debug = false;
+bool show_version = false;
+
+void setup()
+{
   ssp.init();
 
   URTCLIB_WIRE.begin();
+
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
 
   ssp.registerCommand('r', onReady);
   ssp.registerCommand('t', onSetTime);
@@ -171,26 +205,29 @@ void setup() {
   bitClear(ADCSRA, ADPS0);
   bitSet(ADCSRA, ADPS1);
   bitClear(ADCSRA, ADPS2);
+
+  debug = false;
+  show_version = false;
 }
 
 float hue = 0;
 int frame = 0;
 
-bool debug = false;
-bool show_version = false;
-
-void loop() {
+void loop()
+{
   ssp.loop();
 
   float delta = (float)1 / (float)FastLED.getFPS();
   hue = hue + (delta * BACKGROUND_SPEED);
   frame = frame + 1;
 
-  if (hue >= 255) {
+  if (hue >= 255)
+  {
     hue = 0;
   }
 
-  if (frame >= 255) {
+  if (frame >= 255)
+  {
     frame = 0;
   }
 
@@ -198,45 +235,47 @@ void loop() {
 
   rtc.refresh();
 
-  if (show_version) {
-    render_version();
-  } else {
-    int_to_digit(rtc.hour());
+  // int_to_digit(rtc.hour());
 
-    render_digit(0, digits[digit[0]], CRGB::White);
-    render_digit(4, digits[digit[1]], CRGB::White);
+  // render_digit(0, digits[digit[0]], CRGB::White);
+  // render_digit(4, digits[digit[1]], CRGB::White);
 
-    int_to_digit(rtc.minute());
+  // int_to_digit(rtc.minute());
 
-    render_digit(10, digits[digit[0]], CRGB::White);
-    render_digit(14, digits[digit[1]], CRGB::White);
+  // render_digit(10, digits[digit[0]], CRGB::White);
+  // render_digit(14, digits[digit[1]], CRGB::White);
 
-    // int_to_digit(frame % 26);
+  int_to_digit(frame % 26);
 
-    // render_character(12, characters[frame % 26], CRGB::White);
-    // render_character(8, characters[digit[0]], CRGB::White);
+  // render_digit(0, digits[digit[0]], CRGB::White);
+  // render_digit(4, digits[digit[1]], CRGB::White);
 
-    if (rtc.second() % 2 == 0) {
-      leds[44] = CRGB::White;
-      leds[83] = CRGB::White;
-    }
+  // render_character(12, characters[1], CRGB::White);
+
+  if (rtc.second() % 2 == 0)
+  {
+    leds[44] = CRGB::White;
+    leds[83] = CRGB::White;
   }
 
   FastLED.show();
 
-  if (debug == true) {
+  if (debug == true)
+  {
     update();
     update_fps();
   }
 
-  // delay(100);
+  delay(100);
 }
 
-void onError(uint8_t errorNum) {
+void onError(uint8_t errorNum)
+{
   digitalWrite(LED_BUILTIN, HIGH);
 }
 
-void onReady() {
+void onReady()
+{
   uint8_t software_major = ssp.readUnsignedInt8();
   uint8_t software_minor = ssp.readUnsignedInt8();
   uint8_t software_patch = ssp.readUnsignedInt8();
@@ -252,7 +291,8 @@ void onReady() {
   ssp.writeEot();
 }
 
-void onSetTime() {
+void onSetTime()
+{
   uint8_t second = ssp.readUnsignedInt8();
   uint8_t minute = ssp.readUnsignedInt8();
   uint8_t hour = ssp.readUnsignedInt8();
@@ -266,13 +306,21 @@ void onSetTime() {
   ssp.readEot();
 };
 
-void onShowVersion() {
-  show_version = true;
+void onShowVersion()
+{
+  show_version = ssp.readBool();
+  debug = !show_version;
+
+  if (show_version)
+  {
+    render_version();
+  }
 
   ssp.readEot();
 }
 
-void onSetDebug() {
+void onSetDebug()
+{
   debug = ssp.readBool();
 
   ssp.readEot();

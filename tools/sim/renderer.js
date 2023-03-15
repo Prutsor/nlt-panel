@@ -29,6 +29,7 @@ scene.add(light);
 
 document.getElementById('content').appendChild(renderer.domElement);
 
+let materials = [];
 let hexagons = [];
 let hexagon_caps = {};
 
@@ -52,8 +53,6 @@ fbxLoader.load(
 
 		const hexagrid = object.children[0].children[0];
 		const hexagrid_caps = object.children[1].children[0];
-
-		object.children[2].position.set(1000, 0, 0);
 
 		let rows = [];
 
@@ -128,6 +127,25 @@ fbxLoader.load(
 			a: 0.1,
 		};
 
+		for (const hexagon of hexagons) {
+			const color = calc_color(0, 0, 0);
+
+			const material = new THREE.MeshBasicMaterial({
+				color: new THREE.Color(...color),
+			});
+
+			// const material = hexagon.material.clone();
+
+			if (hexagon_caps[hexagon.id] !== undefined) {
+				for (const cap of hexagon_caps[hexagon.id]) {
+					cap.material = material;
+				}
+			}
+
+			hexagon.material = material;
+			materials.push(material);
+		}
+
 		scene.add(object);
 
 		console.log('loaded panel.fbx');
@@ -153,34 +171,28 @@ render();
 
 const color_blend = require('color-blend');
 
+const calc_color = (r, g, b) => {
+	const color = color_blend.overlay(window.default_color, {
+		r,
+		b,
+		g,
+		a: 0.9,
+	});
+
+	return [color.r / 255, color.g / 255, color.b / 255];
+};
+
 window.renderer = {
 	setPixel: (i, r, g, b) => {
-		const hexagon = hexagons[i];
+		if (materials[i]) {
+			const color = calc_color(r, g, b);
 
-		if (hexagon && window.debug) {
-			const color = color_blend.overlay(window.default_color, {
-				r,
-				b,
-				g,
-				a: 0.9,
-			});
-
-			const material = new THREE.MeshBasicMaterial({
-				color: new THREE.Color(color.r / 255, color.g / 255, color.b / 255),
-			});
-
-			if (hexagon_caps[hexagon.id] !== undefined) {
-				for (const cap of hexagon_caps[hexagon.id]) {
-					cap.material = material;
-				}
-			}
-
-			hexagon.material = material;
+			materials[i].color.setRGB(...color);
 		}
 	},
 
 	reset: () => {
-		for (const hexagon of hexagons) {
+		for (const material of materials) {
 			const material = window.default_material;
 
 			if (hexagon_caps[hexagon.id] !== undefined) {

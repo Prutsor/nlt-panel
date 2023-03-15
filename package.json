@@ -1,6 +1,6 @@
 {
 	"name": "nlt-panel",
-	"version": "2.2.1",
+	"version": "3.0.0",
 	"description": "",
 	"main": "tools/simulation/main.js",
 	"scripts": {
@@ -22,6 +22,7 @@
 		"color-blend": "^4.0.0",
 		"electron": "^22.1.0",
 		"five-server": "^0.1.9",
+		"quick-local-ip": "^1.0.7",
 		"serialport": "^10.5.0"
 	}
 }
