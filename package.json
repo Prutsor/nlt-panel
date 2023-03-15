@@ -1,28 +1,32 @@
 {
-	"name": "nlt-panel",
-	"version": "3.0.0",
-	"description": "",
-	"main": "tools/simulation/main.js",
-	"scripts": {
-		"tools.sim": "electron tools/sim/main",
-		"tools.svg": "five-server"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Prutsor/nlt-panel.git"
-	},
-	"author": "Prutsor",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/Prutsor/nlt-panel/issues"
-	},
-	"homepage": "https://github.com/Prutsor/nlt-panel#readme",
-	"dependencies": {
-		"@serialport/bindings-cpp": "^10.8.0",
-		"color-blend": "^4.0.0",
-		"electron": "^22.1.0",
-		"five-server": "^0.1.9",
-		"quick-local-ip": "^1.0.7",
-		"serialport": "^10.5.0"
-	}
+  "name": "nlt-panel",
+  "version": "3.0.0",
+  "description": "",
+  "main": "tools/simulation/main.js",
+  "scripts": {
+    "tools.sim": "electron tools/sim/main",
+    "tools.svg": "five-server",
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Prutsor/nlt-panel.git"
+  },
+  "author": "Prutsor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Prutsor/nlt-panel/issues"
+  },
+  "homepage": "https://github.com/Prutsor/nlt-panel#readme",
+  "dependencies": {
+    "@serialport/bindings-cpp": "^10.8.0",
+    "color-blend": "^4.0.0",
+    "electron": "^22.1.0",
+    "five-server": "^0.1.9",
+    "quick-local-ip": "^1.0.7",
+    "serialport": "^10.5.0",
+    "@snyk/protect": "latest"
+  },
+  "snyk": true
 }
