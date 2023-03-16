@@ -29,11 +29,11 @@ const int broadcast_port = 8266;
 
 const int server_port = 8265;
 
-// @version 3.0.0
+// @version 3.0.1
 
 const uint8_t MAJOR = 3;
 const uint8_t MINOR = 0;
-const uint8_t PATCH = 0;
+const uint8_t PATCH = 1;
 
 Adafruit_NeoPixel strip(NUM_LEDS, D6, NEO_GRB + NEO_KHZ800);
 

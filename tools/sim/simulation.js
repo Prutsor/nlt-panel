@@ -2,11 +2,13 @@ const button_debug = document.getElementById('button_debug');
 const button_connect = document.getElementById('button_connect');
 const button_time = document.getElementById('button_time');
 
-// @version 3.0.0
+const version = require('../../package.json').version.split('.');
 
-const MAJOR = 3;
-const MINOR = 0;
-const PATCH = 0;
+// @version x.x.x
+
+const MAJOR = version[0];
+const MINOR = version[1];
+const PATCH = version[2];
 
 document.getElementById(
 	'info_version_software'
