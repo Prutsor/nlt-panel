@@ -93,6 +93,14 @@ client.on('message', (data, rinfo) => {
 
 // TODO: WEATHER: http://ip-api.com/line/?fields=lat,lon
 // https://openweathermap.org/weather-conditions
+// https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
+// https://api.openweathermap.org/data/2.5/weather?lat=52.3831&lon=4.7472&appid=c10386b95af169db0c15d11aa0170def
+// https://api.openweathermap.org/data/2.5/weather?lat=52.3831&lon=4.7472&appid=c10386b95af169db0c15d11aa0170def&units=metric
+
+// // You can specify the time server pool and the offset (in seconds, can be
+// // changed later with setTimeOffset() ). Additionally you can specify the
+// // update interval (in milliseconds, can be changed using setUpdateInterval() ).
+// NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000);
 
 const net = require('net');
 let stream_fps = 0;
