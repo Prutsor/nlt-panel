@@ -127,7 +127,16 @@ fbxLoader.load(
 			a: 0.1,
 		};
 
+		// const mapping = [];
+
 		for (const hexagon of hexagons) {
+			// const position = new THREE.Vector3();
+			// position.setFromMatrixPosition(hexagon.matrixWorld);
+
+			// mapping.push(
+			// 	`{${Math.floor(position.x * 3)}, ${Math.floor(position.y * 3) + 3}}`
+			// );
+
 			const color = calc_color(0, 0, 0);
 
 			const material = new THREE.MeshBasicMaterial({
@@ -145,6 +154,8 @@ fbxLoader.load(
 			hexagon.material = material;
 			materials.push(material);
 		}
+
+		// console.log(mapping.join(','));
 
 		scene.add(object);
 

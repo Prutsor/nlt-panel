@@ -4,11 +4,12 @@
 #include <ESP8266HTTPClient.h>
 
 #include <NTPClient.h>
-#include <Arduino_JSON.h>
+#include <ArduinoJson.h>
 
 #include <WiFiUdp.h>
 #include <ESPAsyncTCP.h>
 
+#include <FastLED.h>
 #include <Adafruit_NeoPixel.h>
 
 #include <AceRoutine.h>
@@ -17,6 +18,7 @@ using namespace ace_routine;
 #define NUM_LEDS 128
 
 const int BACKGROUND_SPEED = 2;
+const int BACKGROUND_MODE = 1;
 
 const int REFRESH_RATE_STREAM = 30;
 const int REFRESH_RATE = 60;
@@ -55,15 +57,19 @@ const int characters[26][13] = {{1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 15}, {1, 2,
 const int character_rows[16][4] = {{1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2}, {3, 0}, {3, 1}, {3, 2}, {4, 0}, {4, 1}, {4, 2}, {5, 0}, {5, 1}, {5, 2}, {6, 2}};
 const int character_offset[6][2] = {{0, 0}, {1, 0}, {1, 1}, {2, 1}, {2, 2}, {1, 1}};
 
+const int noise_map[128][2] = {{1, 5}, {2, 5}, {3, 5}, {4, 5}, {5, 5}, {6, 5}, {7, 5}, {8, 5}, {9, 5}, {10, 5}, {11, 5}, {12, 5}, {13, 5}, {14, 5}, {15, 5}, {16, 5}, {17, 5}, {18, 4}, {17, 4}, {16, 4}, {15, 4}, {14, 4}, {13, 4}, {12, 4}, {11, 4}, {10, 4}, {9, 4}, {8, 4}, {7, 4}, {6, 4}, {5, 4}, {4, 4}, {3, 4}, {2, 4}, {1, 4}, {0, 3}, {1, 3}, {2, 3}, {3, 3}, {4, 3}, {5, 3}, {6, 3}, {7, 3}, {8, 3}, {9, 3}, {10, 3}, {11, 3}, {12, 3}, {13, 3}, {14, 3}, {15, 3}, {16, 3}, {17, 3}, {18, 3}, {19, 2}, {18, 2}, {17, 2}, {16, 2}, {15, 2}, {14, 2}, {13, 2}, {12, 2}, {11, 2}, {10, 2}, {9, 2}, {8, 2}, {7, 2}, {6, 2}, {5, 2}, {4, 2}, {3, 2}, {2, 2}, {1, 2}, {0, 3}, {0, 2}, {1, 2}, {2, 2}, {3, 2}, {4, 2}, {5, 2}, {6, 2}, {7, 2}, {8, 2}, {9, 2}, {10, 2}, {11, 2}, {12, 2}, {13, 2}, {14, 2}, {15, 2}, {16, 2}, {17, 2}, {18, 2}, {18, 1}, {17, 1}, {16, 1}, {15, 1}, {14, 1}, {13, 1}, {12, 1}, {11, 1}, {10, 1}, {9, 1}, {8, 1}, {7, 1}, {6, 1}, {5, 1}, {4, 1}, {3, 1}, {2, 1}, {1, 1}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 0}, {9, 0}, {10, 0}, {11, 0}, {12, 0}, {13, 0}, {14, 0}, {15, 0}, {16, 0}, {17, 0}};
+
 const int character_direction = 1;
 // 0 = ltr (left to right)
 // 1 = rtl (right to left) (werkt niet misclick)
 
 static unsigned long last_time = 0;
 unsigned long delta = 0;
+uint16_t hue = 0;
 
 int weather_temp = 0;
 int weather_group = 0; // clear
+int weather_id = 0;
 // https://openweathermap.org/weather-conditions
 
 WiFiUDP ntpUDP;
@@ -300,99 +306,145 @@ COROUTINE(statusLoop)
   }
 }
 
-String json_buffer;
+DynamicJsonDocument ip_doc(1024);
+DynamicJsonDocument weather_doc(1024);
+
+char url_buffer[128];
 
 COROUTINE(weatherLoop)
 {
   COROUTINE_LOOP()
   {
-    json_buffer = httpGETRequest("http://ip-api.com/json?fields=192");
-    JSONVar ip_response = JSON.parse(json_buffer);
+    DeserializationError ip_error = deserializeJson(ip_doc, httpGETRequest("http://ip-api.com/json?fields=192"));
 
-    String weather_url = "https://api.openweathermap.org/data/2.5/weather?units=metric&lat=" + (String)ip_response["lat"] + "&lon=" + (String)ip_response["lon"] + "&appid=" + OWM_KEY;
+    String weather_url = "http://api.openweathermap.org/data/2.5/weather?units=metric&lat=" + (String)ip_doc["lat"] + "&lon=" + (String)ip_doc["lon"] + "&appid=" + OWM_KEY;
 
-    json_buffer = httpGETRequest(weather_url.c_str());
-    JSONVar weather_response = JSON.parse(json_buffer);
+    weather_url.toCharArray(url_buffer, 128);
 
-    Serial.println(weather_response["timezone"]);
+    DeserializationError weather_error = deserializeJson(weather_doc, httpGETRequest(url_buffer));
 
-    // time_client.setTimeOffset(weather_response["timezone"]);
+    time_client.setTimeOffset((int)weather_doc["timezone"]);
 
-    // JSONVar weather = weather_response["weather"][0];
+    weather_temp = (int)round((double)weather_doc["main"]["temp"]);
 
-    // weather_temp = (int)round(atof(weather_response["main"]["temp"]));
+    if ((int)weather_doc["weather"][0]["id"] == 800)
+    {
+      weather_group = 0;
+      weather_id = 0;
+    }
+    else
+    {
+      weather_group = (int)floor((int)weather_doc["weather"][0]["id"] / 100.0);
+      weather_id = weather_doc["weather"][0]["id"];
+    }
 
-    // if (atoi(weather["id"]) == 800) {
-    //   weather_group = 0;
-    // } else {
-    //   weather_group = (int)floor(atoi(weather["id"]) / 100.0);
-    // }
+    Serial.println("temp");
+    Serial.println(weather_temp);
+    Serial.println("group");
+    Serial.println(weather_group);
+    Serial.println("id");
+    Serial.println(weather_id);
+    Serial.println();
 
-    COROUTINE_DELAY(WEATHER_DELAY);
+    ip_doc.clear();
+    weather_doc.clear();
+
+    COROUTINE_DELAY_SECONDS(WEATHER_DELAY / 1000);
   }
 }
 
-uint16_t hue = 0;
-
-void loop()
+void render_background(int delta)
 {
-  unsigned long time = millis();
-  delta = time - last_time;
-
   hue = hue + (delta * BACKGROUND_SPEED);
   hue = hue % 65535;
 
-  strip.fill(strip.ColorHSV(hue));
+  int offset = millis() / 10;
 
-  time_client.update();
+  switch (BACKGROUND_MODE)
+  {
+  case 0:
+    strip.fill(strip.ColorHSV(hue));
 
-  // int_to_digit(time_client.getHours());
+    break;
+  case 1:
+    for (int i = 0; i < NUM_LEDS; i++)
+    {
+      uint8_t noise = inoise8(noise_map[i][0] * 50 + offset, noise_map[i][1] * 50);
 
-  // render_digit(0, digits[digit[0]]);
-  // render_digit(4, digits[digit[1]]);
+      strip.setPixelColor(i, strip.Color(noise, noise, noise));
+    }
 
-  // int_to_digit(time_client.getMinutes());
+    break;
+  }
+}
 
-  // render_digit(10, digits[digit[0]]);
-  // render_digit(14, digits[digit[1]]);
+COROUTINE(renderLoop)
+{
+  COROUTINE_LOOP()
+  {
+    unsigned long time = millis();
+    delta = time - last_time;
 
-  // if (time_client.getSeconds() % 2 == 0) {
-  //   strip.setPixelColor(44, DIGIT_COLOR);
-  //   strip.setPixelColor(83, DIGIT_COLOR);
-  // }
+    time_client.update();
 
-  // // character test
-  int fortnite = (int)round(hue / 1000) % 26;
+    render_background(delta);
 
-  int_to_digit(fortnite);
+    int_to_digit(time_client.getHours());
 
-  render_digit(0, digits[digit[0]]);
-  render_digit(4, digits[digit[1]]);
-  render_character(12, characters[fortnite]);
+    render_digit(0, digits[digit[0]]);
+    render_digit(4, digits[digit[1]]);
 
-  // // weather test
-  // int_to_digit(weather_temp);
+    int_to_digit(time_client.getMinutes());
 
-  // render_digit(0, digits[digit[0]]);
-  // render_digit(4, digits[digit[1]]);
+    render_digit(10, digits[digit[0]]);
+    render_digit(14, digits[digit[1]]);
 
-  // render_digit(10, digits[weather_group]);
+    if (time_client.getSeconds() % 2 == 0)
+    {
+      strip.setPixelColor(44, DIGIT_COLOR);
+      strip.setPixelColor(83, DIGIT_COLOR);
+    }
 
-  strip.show();
+    // // character test
+    // int fortnite = (int)round(hue / 1000) % 26;
 
+    // int_to_digit(fortnite);
+
+    // render_digit(0, digits[digit[0]]);
+    // render_digit(4, digits[digit[1]]);
+    // render_character(12, characters[fortnite]);
+
+    // // weather test
+    // int_to_digit(weather_temp);
+
+    // render_digit(0, digits[digit[0]]);
+    // render_digit(4, digits[digit[1]]);
+
+    // render_digit(10, digits[weather_group]);
+
+    strip.show();
+
+    last_time = time;
+
+    unsigned long post_time = millis();
+
+    if ((post_time - time) < (1000 / REFRESH_RATE))
+      COROUTINE_DELAY((1000 / REFRESH_RATE) - (post_time - time));
+
+    // COROUTINE_DELAY(1000 / REFRESH_RATE);
+  }
+}
+
+void loop()
+{
   broadcastLoop.runCoroutine();
-  // weatherLoop.runCoroutine();
+  weatherLoop.runCoroutine();
+
+  renderLoop.runCoroutine();
 
   if (clients.size() > 0)
   {
     streamLoop.runCoroutine();
     statusLoop.runCoroutine();
   }
-
-  unsigned long post_time = millis();
-
-  if ((post_time - time) < (1000 / REFRESH_RATE))
-    delay((1000 / REFRESH_RATE) - (post_time - time));
-
-  last_time = time;
 }
