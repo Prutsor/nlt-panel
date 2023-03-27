@@ -331,7 +331,7 @@ void render_background(int delta) {
   hue = hue + (delta * BACKGROUND_SPEED);
   hue = hue % 65535;
 
-  int offset = millis() / 10;
+  int offset = millis() / 25;
 
   switch (BACKGROUND_MODE) {
     case 0:
@@ -369,12 +369,12 @@ void render_background(int delta) {
 
           break;
         case 8:  // Clouds
-          int intensity = (804 - weather_id) * 10;
+          int intensity = (weather_id - 801) * 15;
 
           for (int i = 0; i < NUM_LEDS; i++) {
-            uint8_t noise = inoise8(noise_map[i][0] * 50 + offset, noise_map[i][1] * 50);
+            uint8_t noise = inoise8(noise_map[i][0] * 50 + offset, noise_map[i][1] * 50) - intensity;
 
-            strip.setPixelColor(i, scaleBrightness(strip.ColorHSV(sky_hue_mapped, 255.0 - noise * pow(noise / 255.0, 0.5)), BACKGROUND_BRIGHTNESS));
+            strip.setPixelColor(i, scaleBrightness(strip.ColorHSV(sky_hue_mapped, noise), BACKGROUND_BRIGHTNESS));
           }
 
           break;
@@ -441,7 +441,7 @@ COROUTINE(renderLoop) {
 void loop() {
   MDNS.update();
 
-  weatherLoop.runCoroutine();
+  // weatherLoop.runCoroutine();
 
   renderLoop.runCoroutine();
 
