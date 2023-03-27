@@ -1,0 +1,9 @@
+{
+    "verbose": true,
+    "watch": [
+        "examples/echo-example/echo-example.ts"
+    ],
+    "events": {
+        "restart": "npm run readme"
+    }
+}

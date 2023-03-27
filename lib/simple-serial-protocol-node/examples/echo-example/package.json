@@ -1,0 +1,26 @@
+{
+    "name": "echo-example",
+    "version": "2.2.0",
+    "description": "",
+    "main": "./dist/echo-example.js",
+    "scripts": {
+        "clean": "rimraf ./dist",
+        "compile": "tsc",
+        "run-app": "node ./dist/echo-example.js",
+        "run-app:dev": "node --inspect=localhost:3000 --require source-map-support/register ./dist/echo-example.js",
+        "start": "npm run clean && npm run compile && npm run run-app",
+        "start:dev": "npm run clean && npm run compile && npm run run-app:dev -- COM5 9600",
+        "linker": "npm link @yesbotics/simple-serial-protocol-node"
+    },
+    "author": "Albrecht Nitsche, Jens Kabisch",
+    "license": "MIT",
+    "devDependencies": {
+        "rimraf": "^3.0.0",
+        "source-map-support": "^0.5.16",
+        "typescript": "^3.7.2"
+    },
+    "dependencies": {
+        "@yesbotics/simple-serial-protocol-node": "^2.2.0",
+        "nodemon": "^2.0.2"
+    }
+}

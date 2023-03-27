@@ -1,0 +1,5 @@
+{
+    "board": "arduino:avr:uno",
+    "sketch": "nlt-panel.ino",
+    "port": "COM3"
+}

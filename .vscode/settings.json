@@ -1,0 +1,17 @@
+{
+    "prettier.bracketSpacing": true,
+    "editor.formatOnSave": true,
+    "files.associations": {
+        "array": "cpp",
+        "chrono": "cpp",
+        "format": "cpp",
+        "forward_list": "cpp",
+        "initializer_list": "cpp",
+        "list": "cpp",
+        "vector": "cpp",
+        "xhash": "cpp",
+        "xstring": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp"
+    }
+}

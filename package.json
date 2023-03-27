@@ -1,0 +1,30 @@
+{
+	"name": "nlt-panel",
+	"version": "3.0.1",
+	"description": "",
+	"main": "tools/simulation/main.js",
+	"scripts": {
+		"tools.sim": "electron tools/sim/main",
+		"tools.svg": "five-server"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Prutsor/nlt-panel.git"
+	},
+	"author": "Prutsor",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Prutsor/nlt-panel/issues"
+	},
+	"homepage": "https://github.com/Prutsor/nlt-panel#readme",
+	"dependencies": {
+		"@serialport/bindings-cpp": "^10.8.0",
+		"bonjour": "^3.5.0",
+		"color-blend": "^4.0.0",
+		"electron": "^22.1.0",
+		"five-server": "^0.1.9",
+		"mdns": "^2.7.2",
+		"quick-local-ip": "^1.0.7",
+		"serialport": "^10.5.0"
+	}
+}
