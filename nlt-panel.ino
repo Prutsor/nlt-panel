@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <vector>
 
 #include <ESP8266WiFi.h>
@@ -16,36 +18,9 @@
 #include <AceCommon.h>
 #include <AceRoutine.h>
 
-using ace_common::binarySearch;
 using namespace ace_routine;
 
 #define NUM_LEDS 128
-
-const int BACKGROUND_SPEED = 2;
-const int BACKGROUND_MODE = 1;
-const float BACKGROUND_BRIGHTNESS = 0.5;
-
-const int REFRESH_RATE_STREAM = 30;
-const int REFRESH_RATE = 60;
-
-const int BROADCAST_DELAY = 2500;
-const int STATUS_DELAY = 1000;
-
-const int WEATHER_DELAY = 1000 * 60 * 5;
-
-const char *SERVICE_NAME = "nlt-panel-mksp";
-const int SERVICE_PORT = 8266;
-
-const char *ssid = "mkhome24";
-const char *password = "neebedankt";
-
-const char *OWM_KEY = "c10386b95af169db0c15d11aa0170def";
-
-// @version 3.0.1
-
-const uint8_t MAJOR = 3;
-const uint8_t MINOR = 0;
-const uint8_t PATCH = 1;
 
 Adafruit_NeoPixel strip(NUM_LEDS, D6, NEO_GRB + NEO_KHZ800);
 
