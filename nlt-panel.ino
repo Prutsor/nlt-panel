@@ -31,10 +31,6 @@ const int rows[7] = { 0, 33, 36, 71, 75, 109, 111 };
 const int digits[10][10] = { { 1, 2, 3, 5, 8, 10, 11, 12 }, { 2, 5, 7, 10, 12 }, { 1, 2, 5, 7, 6, 8, 11, 12 }, { 1, 2, 5, 7, 6, 10, 12, 10, 11 }, { 1, 3, 6, 7, 5, 10, 12 }, { 1, 2, 3, 6, 7, 10, 11, 12 }, { 2, 4, 6, 7, 8, 11, 12, 10 }, { 1, 2, 5, 7, 9, 11 }, { 1, 2, 3, 5, 6, 7, 8, 10, 11, 12 }, { 1, 2, 3, 5, 6, 7, 9, 11 } };
 const int digit_rows[12][2] = { { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 2, 2 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 4, 2 }, { 5, 0 }, { 5, 1 } };
 
-// const int characters[26][13] = { { 1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 15 }, { 1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15 }, { 1, 2, 3, 4, 7, 10, 13, 14, 15 }, { 1, 2, 4, 6, 7, 9, 10, 12, 13, 14, 15 }, { 1, 2, 3, 4, 7, 8, 10, 13 }, { 1, 2, 3, 4, 7, 9, 10, 12, 13, 14, 15 }, { 1, 3, 4, 6, 7, 8, 9, 10, 12, 13, 15 }, { 1, 2, 3, 5, 8, 11, 13, 14, 15 }, { 3, 6, 9, 10, 12, 13, 14, 15 }, { 1, 3, 4, 6, 7, 8, 10, 12, 13, 15 }, { 1, 4, 7, 10, 13, 14, 15 }, { 1, 2, 3, 4, 5, 6, 7, 9, 10, 12, 13, 15 }, { 3, 4, 6, 7, 8, 9, 10, 12, 13 }, { 1, 2, 3, 4, 6, 7, 9, 10, 12, 13, 14, 15 }, { 1, 2, 3, 4, 6, 7, 8, 9, 10, 13 }, { 1, 2, 3, 4, 6, 7, 9, 10, 12, 13, 14, 15, 16 }, { 1, 2, 4, 6, 7, 8, 10, 13, 12, 15 }, { 1, 2, 3, 4, 7, 8, 9, 12, 13, 14, 15 }, { 1, 2, 3, 5, 8, 11, 14 }, { 1, 3, 4, 6, 7, 9, 10, 12, 13, 14, 15 }, { 1, 3, 4, 6, 7, 9, 10, 12, 14 }, { 1, 3, 4, 6, 7, 9, 10, 11, 12, 13, 15 }, { 1, 3, 4, 6, 8, 10, 12, 13, 15 }, { 1, 3, 4, 6, 8, 11, 14 }, { 1, 2, 3, 6, 8, 10, 13, 14, 15 } };
-// const int character_rows[16][4] = { { 1, 0 }, { 1, 1 }, { 1, 2 }, { 2, 0 }, { 2, 1 }, { 2, 2 }, { 3, 0 }, { 3, 1 }, { 3, 2 }, { 4, 0 }, { 4, 1 }, { 4, 2 }, { 5, 0 }, { 5, 1 }, { 5, 2 }, { 6, 2 } };
-// const int character_offset[6][2] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 2, 1 }, { 2, 2 }, { 1, 1 } };
-
 const int characters[27][25] = { { 1, 2, 3, 5, 8, 9, 12, 13, 14, 15, 16, 17, 20 }, { 1, 2, 3, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20 }, { 1, 2, 3, 4, 5, 9, 13, 17, 18, 19, 20 }, { 1, 2, 3, 5, 8, 8, 12, 13, 16, 17, 18, 19, 20 }, { 1, 2, 3, 4, 5, 9, 10, 11, 13, 17, 18, 19, 20 }, { 1, 2, 3, 4, 5, 9, 10, 11, 13, 17 }, { 1, 2, 3, 4, 5, 9, 10, 11, 13, 16, 18, 19, 20 }, { 1, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 20 }, { 2, 3, 4, 7, 11, 15, 17, 18, 19, 20 }, { 2, 3, 4, 8, 9, 12, 13, 16, 18, 19, 20 }, { 1, 3, 5, 7, 9, 10, 11, 13, 15, 17, 20 }, { 1, 5, 9, 13, 17, 18, 19, 20 }, { 1, 4, 5, 6, 7, 8, 9, 12, 13, 16, 17, 20 }, { 1, 4, 5, 6, 8, 9, 11, 12, 13, 16, 17, 20 }, { 1, 2, 3, 4, 5, 8, 9, 12, 13, 16, 17, 18, 19, 20 }, { 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 17 }, { 1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 18, 19, 20 }, { 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 15, 17, 20 }, { 1, 2, 3, 4, 5, 10, 11, 12, 16, 17, 18, 19, 20 }, { 1, 2, 3, 4, 7, 11, 15, 19 }, { 1, 4, 5, 8, 9, 12, 13, 16, 18, 19, 20 }, { 1, 4, 5, 8, 10, 12, 15, 16, 20 }, { 1, 5, 6, 10, 11, 13, 15, 16, 18, 20, 21, 22, 23, 24, 25 }, { 1, 4, 7, 8, 9, 13, 17, 18, 19, 22, 25 }, { 1, 4, 6, 8, 11, 12, 16, 20 }, { 1, 2, 3, 4, 7, 10, 11, 13, 14, 17, 18, 19, 20 }, { 10, 11, 12 } };
 const int character_rows[20][2] = { { 1, 0 }, { 1, 1 }, { 1, 2 }, { 1, 3 }, { 2, 0 }, { 2, 1 }, { 2, 2 }, { 2, 3 }, { 3, 0 }, { 3, 1 }, { 3, 2 }, { 3, 3 }, { 4, 0 }, { 4, 1 }, { 4, 2 }, { 4, 3 }, { 5, 0 }, { 5, 1 }, { 5, 2 }, { 5, 3 } };
 const int character_rows_wide[25][2] = { { 1, 0 }, { 1, 1 }, { 1, 2 }, { 1, 3 }, { 1, 4 }, { 2, 0 }, { 2, 1 }, { 2, 2 }, { 2, 3 }, { 2, 4 }, { 3, 0 }, { 3, 1 }, { 3, 2 }, { 3, 3 }, { 3, 4 }, { 4, 0 }, { 4, 1 }, { 4, 2 }, { 4, 3 }, { 4, 4 }, { 5, 0 }, { 5, 1 }, { 5, 2 }, { 5, 3 }, { 5, 4 } };
@@ -55,10 +51,10 @@ uint16_t sky_color = strip.Color(0, 170, 255);
 uint8_t sky_hue = 142;
 uint16_t sky_hue_mapped = map(sky_hue, 0, 255, 0, 65535);
 
-int weather_temp = 0;
+// https://openweathermap.org/weather-conditions
+int weather_temp = 0; // 🥶
 int weather_group = 0;  // clear
 int weather_id = 0;
-// https://openweathermap.org/weather-conditions
 
 WiFiUDP ntpUDP;
 WiFiUDP broadcastUDP;
@@ -71,6 +67,7 @@ static void server_client_disconnect(void *arg, AsyncClient *client) {
   Serial.printf("\n client %s disconnected \n", client->remoteIP().toString().c_str());
 }
 
+// TODO: instellingen via sim?
 // static void server_client_data(void *arg, AsyncClient *client, void *data, size_t len) {
 //   Serial.println("Received data:");
 //   Serial.write((uint8_t *)data, len);
@@ -122,6 +119,8 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+
+    // TODO: display on display (geen probleem)
   }
 
   Serial.println();
@@ -130,7 +129,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   time_client.begin();
-  Serial.println("time_client started");
+  Serial.println("time_client started"); // TODO: dit is cringe
 
   AsyncServer *server = new AsyncServer(SERVICE_PORT);
   server->onClient(&server_client_connect, server);
@@ -141,7 +140,7 @@ void setup() {
 
   Serial.println("tcp server started");
 
-  if (!MDNS.begin(SERVICE_NAME)) {  // Start the mDNS responder for esp8266.local
+  if (!MDNS.begin(SERVICE_NAME)) { 
     Serial.println("Error setting up MDNS responder!");
   }
 
@@ -230,7 +229,6 @@ void render_character(int offset, const int character[25]) {
       int row = (is_wide) ? character_rows_wide[character[i] - 1][0] : character_rows[character[i] - 1][0];
       int index = (is_wide) ? character_rows_wide[character[i] - 1][1] : character_rows[character[i] - 1][1];
       int row_offset = character_offset[row - 1][character_direction];
-      // int row_offset = 0;
 
       if (character_direction == 1)
         row_offset = -row_offset;
@@ -314,15 +312,6 @@ uint32_t scaleBrightness(uint32_t color, float brightness) {
   return ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;
 }
 
-// DEFINE_GRADIENT_PALETTE(sky_22_gp){
-//   0, 200, 200, 200,
-//   75, 200, 200, 200,
-//   125, 135, 206, 235,
-//   255, 135, 206, 235
-// };
-
-// CRGBPalette16 sky_pal = sky_22_gp;
-
 void render_background(int delta) {
   hue = hue + (delta * BACKGROUND_SPEED);
   hue = hue % 65535;
@@ -343,6 +332,8 @@ void render_background(int delta) {
 
       break;
     case 2:
+      // TODO: deze shit
+
       switch (weather_group) {
         case 0:  // Clear
           strip.fill(scaleBrightness(sky_color, BACKGROUND_BRIGHTNESS));
@@ -389,29 +380,29 @@ COROUTINE(renderLoop) {
 
     render_background(delta);
 
-    // int_to_digit(time_client.getHours());
-
-    // render_digit(0, digits[digit[0]]);
-    // render_digit(4, digits[digit[1]]);
-
-    // int_to_digit(time_client.getMinutes());
-
-    // render_digit(10, digits[digit[0]]);
-    // render_digit(14, digits[digit[1]]);
-
-    // if (time_client.getSeconds() % 2 == 0) {
-    //   strip.setPixelColor(44, DIGIT_COLOR);
-    //   strip.setPixelColor(83, DIGIT_COLOR);
-    // }
-
-    // character test
-    int fortnite = (int)round(millis() / 1000) % 27;
-
-    int_to_digit(fortnite);
+    int_to_digit(time_client.getHours());
 
     render_digit(0, digits[digit[0]]);
     render_digit(4, digits[digit[1]]);
-    render_character(12, characters[fortnite]);
+
+    int_to_digit(time_client.getMinutes());
+
+    render_digit(10, digits[digit[0]]);
+    render_digit(14, digits[digit[1]]);
+
+    if (time_client.getSeconds() % 2 == 0) {
+      strip.setPixelColor(44, DIGIT_COLOR);
+      strip.setPixelColor(83, DIGIT_COLOR);
+    }
+
+    // // character test
+    // int fortnite = (int)round(millis() / 1000) % 27;
+
+    // int_to_digit(fortnite);
+
+    // render_digit(0, digits[digit[0]]);
+    // render_digit(4, digits[digit[1]]);
+    // render_character(12, characters[fortnite]);
 
     // // weather test
     // int_to_digit(weather_temp);
@@ -430,6 +421,8 @@ COROUTINE(renderLoop) {
     if ((post_time - time) < (1000 / REFRESH_RATE))
       COROUTINE_DELAY((1000 / REFRESH_RATE) - (post_time - time));
 
+    // TODO: crash voorkomen
+
     // COROUTINE_DELAY(1000 / REFRESH_RATE);
   }
 }
@@ -437,6 +430,7 @@ COROUTINE(renderLoop) {
 void loop() {
   MDNS.update();
 
+  // TODO: config??
   // weatherLoop.runCoroutine();
 
   renderLoop.runCoroutine();
