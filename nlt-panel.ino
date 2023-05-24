@@ -52,7 +52,7 @@ uint8_t sky_hue = 142;
 uint16_t sky_hue_mapped = map(sky_hue, 0, 255, 0, 65535);
 
 // https://openweathermap.org/weather-conditions
-int weather_temp = 0; // 🥶
+int weather_temp = 0;   // 🥶
 int weather_group = 0;  // clear
 int weather_id = 0;
 
@@ -129,7 +129,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   time_client.begin();
-  Serial.println("time_client started"); // TODO: dit is cringe
+  Serial.println("time_client started");  // TODO: dit is cringe
 
   AsyncServer *server = new AsyncServer(SERVICE_PORT);
   server->onClient(&server_client_connect, server);
@@ -140,7 +140,7 @@ void setup() {
 
   Serial.println("tcp server started");
 
-  if (!MDNS.begin(SERVICE_NAME)) { 
+  if (!MDNS.begin(SERVICE_NAME)) {
     Serial.println("Error setting up MDNS responder!");
   }
 
