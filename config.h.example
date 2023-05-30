@@ -1,12 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// @version x.x.x
-
-const uint8_t MAJOR = 0;
-const uint8_t MINOR = 0;
-const uint8_t PATCH = 0;
-
 const int BACKGROUND_SPEED = 2;
 const int BACKGROUND_MODE = 1;
 const float BACKGROUND_BRIGHTNESS = 0.5;
