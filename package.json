@@ -1,6 +1,6 @@
 {
 	"name": "nlt-panel",
-	"version": "3.0.1",
+	"version": "3.0.2",
 	"description": "",
 	"main": "tools/simulation/main.js",
 	"scripts": {
