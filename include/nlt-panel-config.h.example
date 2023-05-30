@@ -1,6 +1,3 @@
-#ifndef CONFIG_H
-#define CONFIG_H
-
 const int BACKGROUND_SPEED = 2;
 const int BACKGROUND_MODE = 1;
 const float BACKGROUND_BRIGHTNESS = 0.5;
@@ -20,5 +17,3 @@ const char *ssid = "McDonald's Free Wi-Fi";
 const char *password = "neebedankt";
 
 const char *OWM_KEY = "cfpvlO7VmZO2GufMVAaBIkktoGS5X11P";
-
-#endif // CONFIG_H

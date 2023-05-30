@@ -1,4 +1,4 @@
-config.h
+include/nlt-panel-config.h
 
 # Logs
 logs
