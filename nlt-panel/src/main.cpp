@@ -8,9 +8,12 @@
 
 #include <NTPClient.h>
 
+<<<<<<< HEAD
 #include "config.h"
 #include "constants.h"
 
+=======
+>>>>>>> 4eb51d34ab5e98c63a17e66cf95881cebc03d776
 #include "display.h"
 #include "visualizer.h"
 
@@ -54,7 +57,10 @@ void loop()
 	MDNS.update();
 	time_client.update();
 
+<<<<<<< HEAD
 	display.render_background();
+=======
+>>>>>>> 4eb51d34ab5e98c63a17e66cf95881cebc03d776
 	display.render_time(time_client.getHours(), time_client.getMinutes(), time_client.getSeconds());
 
 	display.update();

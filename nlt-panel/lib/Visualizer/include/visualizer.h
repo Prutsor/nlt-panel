@@ -18,7 +18,10 @@ class Visualizer
 
     private:
         AsyncUDP _udp;
+<<<<<<< HEAD
         Display _display;
+=======
+>>>>>>> 4eb51d34ab5e98c63a17e66cf95881cebc03d776
 };
 
 #endif
