@@ -1,0 +1,3 @@
+{
+	"rust-analyzer.linkedProjects": ["nlt-panel-visualizer/src-tauri/Cargo.toml"]
+}

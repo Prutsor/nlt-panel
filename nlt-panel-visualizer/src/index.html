@@ -1,46 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="styles.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri App</title>
-    <script type="module" src="/main.js" defer></script>
-    <style>
-      .logo.vanilla:hover {
-        filter: drop-shadow(0 0 2em #ffe21c);
-      }
-    </style>
-  </head>
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" href="style/styles.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <body>
-    <div class="container">
-      <h1>Welcome to Tauri!</h1>
+		<title>Tauri App</title>
 
-      <div class="row">
-        <a href="https://tauri.app" target="_blank">
-          <img src="/assets/tauri.svg" class="logo tauri" alt="Tauri logo" />
-        </a>
-        <a
-          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"
-          target="_blank"
-        >
-          <img
-            src="/assets/javascript.svg"
-            class="logo vanilla"
-            alt="JavaScript logo"
-          />
-        </a>
-      </div>
+		<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
 
-      <p>Click on the Tauri logo to learn more about the framework</p>
+		<script src="https://cdn.tailwindcss.com"></script>
 
-      <form class="row" id="greet-form">
-        <input id="greet-input" placeholder="Enter a name..." />
-        <button type="submit">Greet</button>
-      </form>
+		<script src="https://unpkg.com/@ryangjchandler/alpine-tooltip@1.2.0/dist/cdn.min.js"></script>
+		<script defer src="https://unpkg.com/alpinejs@3.10.5/dist/cdn.min.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/tippy.js@6.3.7/dist/tippy.css" />
+		<link rel="stylesheet" href="https://unpkg.com/tippy.js@6.3.7/animations/shift-away.css" />
 
-      <p id="greet-msg"></p>
-    </div>
-  </body>
+		<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+		<script type="importmap">
+		{
+			"imports": {
+			"three": "https://unpkg.com/three@0.153.0/build/three.module.js",
+			"three/addons/": "https://unpkg.com/three@0.153.0/examples/jsm/"
+			}
+		}
+		</script>
+
+		<script type="module" src="js/renderer.js" defer></script>
+		<script type="module" src="js/main.js" defer></script>
+	</head>
+	<body>
+		Hello World!
+	</body>
 </html>
