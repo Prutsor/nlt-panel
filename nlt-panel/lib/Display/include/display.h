@@ -15,11 +15,8 @@ class Display
     public:
         Display();
 
-<<<<<<< HEAD
         Adafruit_NeoPixel _strip;
 
-=======
->>>>>>> 4eb51d34ab5e98c63a17e66cf95881cebc03d776
         void setup();
 
         void int_to_digit(int time);
@@ -36,11 +33,6 @@ class Display
     private:
         uint32_t scale_brightness(uint32_t color, float brightness);
 
-<<<<<<< HEAD
-=======
-        Adafruit_NeoPixel _strip;
-
->>>>>>> 4eb51d34ab5e98c63a17e66cf95881cebc03d776
         int _digit_buffer[2];
 
         unsigned long _last_time;

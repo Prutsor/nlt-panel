@@ -6,11 +6,7 @@ void Visualizer::setup(Display display)
 {
 	_udp = AsyncUDP();
 
-<<<<<<< HEAD
 	if (_udp.listen(VISUALIZER_PORT))
-=======
-    if (_udp.listen(VISUALIZER_PORT))
->>>>>>> 4eb51d34ab5e98c63a17e66cf95881cebc03d776
 	{
 		Serial.print("	Listening on UDP port ");
 		Serial.println(VISUALIZER_PORT);
@@ -19,7 +15,6 @@ void Visualizer::setup(Display display)
 	{
 		Serial.print("Failed");
 	}
-<<<<<<< HEAD
 }
 
 void Visualizer::update()
@@ -36,6 +31,4 @@ void Visualizer::update()
     }
 
 	_udp.write(packet, sizeof(packet));
-=======
->>>>>>> 4eb51d34ab5e98c63a17e66cf95881cebc03d776
 }
