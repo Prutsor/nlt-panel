@@ -1,0 +1,24 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+const int BACKGROUND_SPEED = 2;
+const int BACKGROUND_MODE = 1;
+const float BACKGROUND_BRIGHTNESS = 0.5;
+
+const int REFRESH_RATE_STREAM = 30;
+const int REFRESH_RATE = 60;
+
+const int BROADCAST_DELAY = 2500;
+const int STATUS_DELAY = 1000;
+
+const int WEATHER_DELAY = 1000 * 60 * 5;
+
+const char *SERVICE_NAME = "nlt-panel-mksp";
+const int SERVICE_PORT = 8266;
+
+const char *ssid = "McDonald's Free Wi-Fi";
+const char *password = "neebedankt";
+
+const char *OWM_KEY = "cfpvlO7VmZO2GufMVAaBIkktoGS5X11P";
+
+#endif
