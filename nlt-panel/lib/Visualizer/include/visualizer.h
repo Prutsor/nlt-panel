@@ -6,18 +6,20 @@
 #include "constants.h"
 #include "config.h"
 
-#include "ESPAsyncUDP.h"
+#include <ESPAsyncTCP.h>
 
 class Visualizer
 {
     public:
-        Visualizer();
+        Visualizer(Display display);
 
-        void setup(Display display);
+        void setup();
         void update();
 
     private:
-        AsyncUDP _udp;
+        AsyncServer *_server;
+        static std::vector<AsyncClient *> _clients;
+
         Display _display;
 };
 

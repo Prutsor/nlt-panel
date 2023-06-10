@@ -13,9 +13,9 @@
 class Display
 {
     public:
-        Display();
+        Display(Adafruit_NeoPixel& strip);
 
-        Adafruit_NeoPixel _strip;
+        Adafruit_NeoPixel& _strip; //TODO: make private
 
         void setup();
 

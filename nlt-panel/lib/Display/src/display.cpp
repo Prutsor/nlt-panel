@@ -1,11 +1,9 @@
 #include "Display.h"
 
-Display::Display() : _digit_buffer{0, 0} {}
+Display::Display(Adafruit_NeoPixel &strip) : _strip(strip), _digit_buffer{0, 0} {}
 
 void Display::setup()
 {
-    _strip = Adafruit_NeoPixel(STRIP_LEDS, STRIP_PIN, STRIP_TYPE);
-
     _strip.begin();
     _strip.show();
 
@@ -81,18 +79,19 @@ uint32_t Display::scale_brightness(uint32_t color, float brightness)
     return ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;
 }
 
-void Display::render_background(){
+void Display::render_background()
+{
     int offset = millis() / 25;
 
     for (int i = 0; i < STRIP_LEDS; i++)
-        {
-            uint8_t noise =
-                inoise8(noise_map[i][0] * 50, noise_map[i][1] * 50, offset);
+    {
+        uint8_t noise =
+            inoise8(noise_map[i][0] * 50, noise_map[i][1] * 50, offset);
 
-            _strip.setPixelColor(
-                i, scale_brightness(_strip.ColorHSV(map(noise, 0, 255, 0, 65535)),
-                                   BACKGROUND_BRIGHTNESS));
-        }
+        _strip.setPixelColor(
+            i, scale_brightness(_strip.ColorHSV(map(noise, 0, 255, 0, 65535)),
+                                BACKGROUND_BRIGHTNESS));
+    }
 };
 
 void Display::update()

@@ -11,11 +11,15 @@
 #include "config.h"
 #include "constants.h"
 
+#include <Adafruit_NeoPixel.h>
+
 #include "display.h"
 #include "visualizer.h"
 
-Display display;
-Visualizer visualizer;
+Adafruit_NeoPixel strip(STRIP_LEDS, STRIP_PIN, STRIP_TYPE);
+
+Display display(strip);
+Visualizer visualizer(display);
 
 WiFiUDP ntp_udp;
 NTPClient time_client(ntp_udp, "europe.pool.ntp.org", 3600, 60000);
@@ -44,7 +48,7 @@ void setup()
 	display.setup();
 
 	Serial.println("visualizer.setup():");
-	visualizer.setup(display);
+	visualizer.setup();
 
 	Serial.println("setup(): Done!");
 }
@@ -59,6 +63,8 @@ void loop()
 
 	display.update();
 	visualizer.update();
+
+	delay(1000);
 }
 
 void setup_wifi()
