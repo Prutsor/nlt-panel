@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 #ifndef CONFIG_H
 #define CONFIG_H
 
-=======
->>>>>>> 4eb51d34ab5e98c63a17e66cf95881cebc03d776
 const int BACKGROUND_SPEED = 2;
 const int BACKGROUND_MODE = 1;
 const float BACKGROUND_BRIGHTNESS = 0.5;
@@ -22,10 +19,6 @@ const int SERVICE_PORT = 8266;
 const char *ssid = "McDonald's Free Wi-Fi";
 const char *password = "neebedankt";
 
-<<<<<<< HEAD
 const char *OWM_KEY = "cfpvlO7VmZO2GufMVAaBIkktoGS5X11P";
 
 #endif
-=======
-const char *OWM_KEY = "cfpvlO7VmZO2GufMVAaBIkktoGS5X11P";
->>>>>>> 4eb51d34ab5e98c63a17e66cf95881cebc03d776

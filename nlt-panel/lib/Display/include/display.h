@@ -3,12 +3,12 @@
 
 #include "Arduino.h"
 
-#include "config.h"
 #include "constants.h"
+#include "config.h"
 #include "font.h"
 
-#include <FastLED.h>
 #include <Adafruit_NeoPixel.h>
+#include <noise.h>
 
 class Display
 {

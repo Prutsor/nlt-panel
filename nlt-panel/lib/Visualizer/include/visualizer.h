@@ -2,9 +2,9 @@
 #define Visualizer_h
 
 #include "display.h"
-#include "config.h"
 
-#include "Arduino.h"
+#include "constants.h"
+#include "config.h"
 
 #include "ESPAsyncUDP.h"
 
