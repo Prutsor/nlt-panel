@@ -8,7 +8,7 @@
 #include "font.h"
 
 #include <Adafruit_NeoPixel.h>
-#include <noise.h>
+#include "noise.h"
 
 class Display
 {
