@@ -1,36 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8" />
-		<link rel="stylesheet" href="style/styles.css" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="style/styles.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  
 		<title>Tauri App</title>
-
+	  
+		<style>
+		  [x-cloak] { display: none!important }
+		</style>
+	  
 		<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-
 		<script src="https://cdn.tailwindcss.com"></script>
-
+	  
+		<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+	  
+		<script type="importmap">
+		  {
+			"imports": {
+			  "three": "https://unpkg.com/three@0.153.0/build/three.module.js",
+			  "three/addons/": "https://unpkg.com/three@0.153.0/examples/jsm/"
+			}
+		  }
+		</script>
+	  
+		<script src="js/renderer.js" type="module"></script>
+		<script src="js/main.js" type="module"></script>
+	  
 		<script src="https://unpkg.com/@ryangjchandler/alpine-tooltip@1.2.0/dist/cdn.min.js"></script>
 		<script defer src="https://unpkg.com/alpinejs@3.10.5/dist/cdn.min.js"></script>
-		<link rel="stylesheet" href="https://unpkg.com/tippy.js@6.3.7/dist/tippy.css" />
-		<link rel="stylesheet" href="https://unpkg.com/tippy.js@6.3.7/animations/shift-away.css" />
+		<link rel="stylesheet" href="https://unpkg.com/tippy.js@6.3.7/dist/tippy.css">
+		<link rel="stylesheet" href="https://unpkg.com/tippy.js@6.3.7/animations/shift-away.css">
+	</head>
+	  
+	<body x-data="main" x-on:keydown.window.escape="menu_return">
+		<div
+			x-cloak
+			x-show="show_loading"
+			class="flex items-center justify-center h-screen"
+		>
+			<svg
+				class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+			>
+				<circle
+					class="opacity-10"
+					cx="12"
+					cy="12"
+					r="10"
+					stroke="currentColor"
+					stroke-width="4"
+				></circle>
+				<path
+					class="opacity-50"
+					fill="currentColor"
+					d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+				></path>
+			</svg>
+		</div>
 
-		<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+		<div x-cloak x-show="show_panel" x-transition>
+			<div id="panel" class="absolute"></div>
+			<div class="absolute space-x-2 top-2 right-4">
+				<button
+					@click="menu_select_panel"
+					type="button"
+					class="rounded-lg border border-gray-300/5 bg-white/5 p-3 text-center text-sm font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5"
+				>
+					<svg
+						class="h-4 w-4"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="feather feather-cast"
+					>
+						<path
+							d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"
+						></path>
+						<line x1="2" y1="20" x2="2.01" y2="20"></line>
+					</svg>
+				</button>
+				<button
+					@click="menu_info"
+					type="button"
+					class="rounded-lg border border-gray-300/5 bg-white/5 p-3 text-center text-sm font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5"
+				>
+					<svg
+						class="h-4 w-4"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="feather feather-info"
+					>
+						<circle cx="12" cy="12" r="10"></circle>
+						<line x1="12" y1="16" x2="12" y2="12"></line>
+						<line x1="12" y1="8" x2="12.01" y2="8"></line>
+					</svg>
+				</button>
+				<button
+					@click="menu_settings"
+					type="button"
+					class="rounded-lg border border-gray-300/5 bg-white/5 p-3 text-center text-sm font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5"
+				>
+					<svg
+						class="h-4 w-4"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="feather feather-settings"
+					>
+						<circle cx="12" cy="12" r="3"></circle>
+						<path
+							d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+						></path>
+					</svg>
+				</button>
+			</div>
+		</div>
 
-		<script type="importmap">
-		{
-			"imports": {
-			"three": "https://unpkg.com/three@0.153.0/build/three.module.js",
-			"three/addons/": "https://unpkg.com/three@0.153.0/examples/jsm/"
+		<div
+			x-cloak
+			x-show="show_settings"
+			x-transition
+			class="fixed inset-0 z-50 flex items-center justify-center p-4"
+		>
+			<div
+				class="mx-auto w-80 overflow-hidden rounded-lg rounded-md backdrop-blur-sm bg-white/5"
+			>
+				<div class="relative p-5">
+					<h3 class="text-lg font-medium text-neutral-50 text-center">
+						Settings
+					</h3>
+
+					<h4 class="text-md font-medium text-neutral-50/50">
+						Versions
+					</h4>
+					<div class="space-y-2">
+						<template x-for="(lib, ver) in versions">
+							<div class="flex">
+								<p
+									x-text="ver"
+									class="text-base font-medium text-neutral-50 mr-auto"
+								>
+									fortmite
+								</p>
+								<p
+									x-text="lib"
+									class="text-base font-medium text-neutral-50/50"
+								>
+									fortnite
+								</p>
+							</div>
+						</template>
+					</div>
+
+					<div class="mt-5 flex justify-end gap-3">
+						<button
+							@click="menu_return"
+							type="button"
+							class="w-full rounded-lg border border-gray-300/5 bg-white/5 px-5 py-2.5 text-center text-sm font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5"
+						>
+							Close
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			x-cloak
+			x-show="show_select_panel"
+			x-transition
+			class="fixed inset-0 z-50 flex items-center justify-center p-4"
+		>
+			<div
+				class="mx-auto w-80 overflow-hidden rounded-lg rounded-md backdrop-blur-sm bg-white/5"
+			>
+				<div class="relative p-5">
+					<h3 class="text-lg font-medium text-neutral-50 text-center">
+						Select panel
+					</h3>
+
+					<ul class="space-y-2 mt-5">
+						<!-- <template x-for="(lib, ver) in versions"> -->
+						<li class="p-4 rounded-md bg-white/5 cursor-pointer">
+							<div class="flex items-baseline gap-2">
+								<h4 class="text-lg font-medium text-neutral-50">
+									nlt-panel-mksp
+								</h4>
+								<span
+									class="rounded-md bg-white/5 px-2 py-1 text-xs font-semibold text-neutral-50/50"
+									>4.0.0</span
+								>
+							</div>
+							<span class="text-sm text-neutral-50/50"
+								>192.168.178.62</span
+							>
+						</li>
+						<!-- </template> -->
+					</ul>
+
+					<div class="mt-5 flex justify-end gap-3">
+						<button
+							@click="menu_return"
+							type="button"
+							class="w-full rounded-lg border border-gray-300/5 bg-white/5 px-5 py-2.5 text-center text-sm font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5"
+						>
+							Cancel
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="x-shader/x-vertex" id="vertexshader">
+
+			varying vec2 vUv;
+
+			void main() {
+
+				vUv = uv;
+
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
 			}
-		}
 		</script>
 
-		<script type="module" src="js/renderer.js" defer></script>
-		<script type="module" src="js/main.js" defer></script>
-	</head>
-	<body>
-		Hello World!
+		<script type="x-shader/x-fragment" id="fragmentshader">
+
+			uniform sampler2D baseTexture;
+			uniform sampler2D bloomTexture;
+
+			varying vec2 vUv;
+
+			void main() {
+
+				gl_FragColor = ( texture2D( baseTexture, vUv ) + vec4( 1.0 ) * texture2D( bloomTexture, vUv ) );
+
+			}
+		</script>
 	</body>
 </html>
