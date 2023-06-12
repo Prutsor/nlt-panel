@@ -15,8 +15,8 @@ export const setup = async () => {
 	const bloomLayer = new THREE.Layers();
 	bloomLayer.set(BLOOM_SCENE);
 
-	const params = {
-		threshold: 0,
+	let params = {
+		threshold: 1,
 		strength: 0.1,
 		radius: 0,
 		exposure: 1.5,
@@ -115,7 +115,7 @@ export const setup = async () => {
 		0.4,
 		0.85
 	);
-	bloomPass.threshold = params.threshold;
+	bloomPass.threshold = 1;
 	bloomPass.strength = params.strength;
 	bloomPass.radius = params.radius;
 
@@ -161,18 +161,22 @@ export const setup = async () => {
 		}
 	};
 
-	let is_on = false
-
 	const render = () => {
 		scene.traverse(darkenNonBloomed);
-		if (is_on) bloomComposer.render();
+		bloomComposer.render();
 		scene.traverse(restoreMaterial);
 
 		finalComposer.render();
 	};
 
-	const turn_on = () => is_on = true
-	const turn_off = () => is_on = false
+	const turn_on = () => {
+		bloomPass.threshold = 0;
+		render();
+	};
+	const turn_off = () => {
+		bloomPass.threshold = 1;
+		render();
+	};
 
 	controls.addEventListener('change', render);
 
@@ -195,5 +199,5 @@ export const setup = async () => {
 
 	render();
 
-	return { render, turn_on, turn_off };
+	return { render, is_on: params.threshold, turn_on, turn_off };
 };
