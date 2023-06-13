@@ -1,6 +1,8 @@
 #ifndef Visualizer_h
 #define Visualizer_h
 
+#include "Arduino.h"
+
 #include "display.h"
 
 #include "constants.h"
@@ -21,6 +23,8 @@ class Visualizer
         static std::vector<AsyncClient *> _clients;
 
         Display _display;
+
+        uint8_t _stream_buffer[385];
 };
 
 #endif

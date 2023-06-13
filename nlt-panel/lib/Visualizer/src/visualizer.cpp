@@ -23,20 +23,20 @@ void Visualizer::update()
 {
 	if (_clients.empty()) return;
 
-	uint8_t packet[STRIP_LEDS * 3 + 1] = {0x01};
+	_stream_buffer[0] = 0x01;
 
 	for (int i = 0; i < STRIP_LEDS; i++)
 	{
 		uint32_t color = _display._strip.getPixelColor(i);
 
-		packet[i * 3 + 1] = (color >> 16) & 0xff;
-		packet[i * 3 + 2] = (color >> 8) & 0xff;
-		packet[i * 3 + 3] = color & 0xff;
+		_stream_buffer[i * 3 + 1] = (color >> 16) & 0xff;
+		_stream_buffer[i * 3 + 2] = (color >> 8) & 0xff;
+		_stream_buffer[i * 3 + 3] = color & 0xff;
 	}
 
 	for (AsyncClient *client : _clients)
 	{
-		client->write((char *)packet, sizeof(packet));
+		client->write((char *)_stream_buffer, sizeof(_stream_buffer));
 	}
 
 	Serial.println("	Visualizer packet sent");
