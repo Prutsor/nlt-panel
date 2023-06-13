@@ -48,7 +48,7 @@
 		/>
 	</head>
 
-	<body x-data="main" x-on:keydown.window.escape="menu_return">
+	<body x-data="main" x-transition x-on:keydown.window.escape="menu_return">
 		<div
 			x-cloak
 			x-show="show_loading"

@@ -16,7 +16,7 @@ export const setup = async () => {
 	bloomLayer.set(BLOOM_SCENE);
 
 	let params = {
-		threshold: 1,
+		threshold: 0,
 		strength: 0.1,
 		radius: 0,
 		exposure: 1.5,
@@ -53,8 +53,7 @@ export const setup = async () => {
 	);
 	const model = await tauri.fs.readTextFile(model_resource);
 
-	const hexagons = [];
-	const hexagon_caps = [];
+	let hexagon_materials = [];
 
 	const model_load = new Promise((resolve, reject) => {
 		loader.parse(model, '', async (gltf) => {
@@ -75,6 +74,9 @@ export const setup = async () => {
 				}
 			});
 
+			let hexagons = [];
+			const hexagon_caps = [];
+
 			model.traverse((object) => {
 				if (object.name) {
 					if (object.name.includes('Hexagon_Cap'))
@@ -89,13 +91,62 @@ export const setup = async () => {
 				}
 			});
 
+			const hexagon_position = (hexagon) => {
+				const vector = new THREE.Vector3();
+				hexagon.getWorldPosition(vector);
+
+				return vector;
+			};
+
+			const hexagon_rows = [];
+
 			for await (const hexagon of hexagons) {
+				const position = hexagon_position(hexagon);
+
+				position.y = Math.floor(position.y * 4);
+
+				if (!hexagon_rows[position.y]) hexagon_rows[position.y] = [];
+
+				hexagon_rows[position.y].push(hexagon);
+			}
+
+			hexagon_rows.sort();
+			hexagons = [];
+
+			for await (let [row, hexagon_row] of Object.entries(hexagon_rows)) {
+				const is_even =
+					(parseInt(row) < 0
+						? Math.floor(parseInt(row) / -3) + 1
+						: parseInt(row)) % 2;
+
+				hexagon_row = hexagon_row.sort((a, b) => {
+					return hexagon_position(a).distanceTo(hexagon_position(b));
+				});
+
+				if (is_even != 0) hexagon_row.reverse();
+
+				hexagons.push(...hexagon_row);
+			}
+
+			console.log(hexagons);
+
+			for await (const [index, hexagon] of Object.entries(hexagons)) {
 				hexagon.layers.enable(BLOOM_SCENE);
+
+				const color = new THREE.Color();
+				color.setHSL(index / 128, 0.5, 0.5);
+
+				const material = new THREE.MeshBasicMaterial({ color: color });
+
+				hexagon.material = material;
+				hexagon_materials[index] = hexagon.material;
 			}
 
 			for await (const hexagon of hexagon_caps) {
 				hexagon.layers.enable(BLOOM_SCENE);
 			}
+
+			console.log(hexagon_materials)
 
 			scene.add(model);
 
@@ -115,7 +166,7 @@ export const setup = async () => {
 		0.4,
 		0.85
 	);
-	bloomPass.threshold = 1;
+	bloomPass.threshold = params.threshold;
 	bloomPass.strength = params.strength;
 	bloomPass.radius = params.radius;
 
@@ -161,6 +212,10 @@ export const setup = async () => {
 		}
 	};
 
+	const set_pixel = (i, r, g, b) => {
+		if (hexagon_materials[i]) hexagon_materials[i].color.setRGB(r/255, g/255, b/255);
+	};
+
 	const render = () => {
 		scene.traverse(darkenNonBloomed);
 		bloomComposer.render();
@@ -199,5 +254,5 @@ export const setup = async () => {
 
 	render();
 
-	return { render, is_on: params.threshold, turn_on, turn_off };
+	return { render, is_on: params.threshold, turn_on, turn_off, set_pixel };
 };

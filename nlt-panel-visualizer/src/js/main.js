@@ -56,6 +56,17 @@ document.addEventListener('alpine:init', () => {
 			if (!this.renderer.is_on) this.renderer.turn_on();
 
 			console.log(packet);
+
+			for (let i = 0; i < 128; i++) {
+				this.renderer.set_pixel(
+					i,
+					packet[i * 3 + 1],
+					packet[i * 3 + 2],
+					packet[i * 3 + 3]
+				);
+			}
+
+			this.renderer.render();
 		},
 
 		async stream_start(panel) {
