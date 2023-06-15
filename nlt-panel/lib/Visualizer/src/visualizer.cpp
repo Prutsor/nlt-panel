@@ -23,6 +23,9 @@ void Visualizer::update()
 {
 	if (_clients.empty()) return;
 
+	//TODO: read raw neopixel buffer
+	//TODO: receive video stream?
+
 	_stream_buffer[0] = 0x01;
 
 	for (int i = 0; i < STRIP_LEDS; i++)
@@ -39,5 +42,5 @@ void Visualizer::update()
 		client->write((char *)_stream_buffer, sizeof(_stream_buffer));
 	}
 
-	Serial.println("	Visualizer packet sent");
+	// Serial.println("	Visualizer packet sent");
 }

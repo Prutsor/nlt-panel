@@ -8,14 +8,14 @@
 #include "font.h"
 
 #include <Adafruit_NeoPixel.h>
-#include "noise.h"
+#include <FastLED.h> //TODO: custom noise implementation
 
 class Display
 {
     public:
-        Display(Adafruit_NeoPixel& strip);
+        Display(Adafruit_NeoPixel &strip);
 
-        Adafruit_NeoPixel& _strip; //TODO: make private
+        Adafruit_NeoPixel &_strip; // TODO: abstract
 
         void setup();
 

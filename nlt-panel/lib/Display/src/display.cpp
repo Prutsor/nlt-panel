@@ -81,16 +81,13 @@ uint32_t Display::scale_brightness(uint32_t color, float brightness)
 
 void Display::render_background()
 {
-    int offset = millis() / 25;
+    uint32_t offset = millis() * NOISE_SPEED;
 
     for (int i = 0; i < STRIP_LEDS; i++)
     {
-        uint8_t noise =
-            inoise8(noise_map[i][0] * 50, noise_map[i][1] * 50, offset);
+        uint16_t noise = inoise16(noise_map[i][0] * NOISE_SCALE, noise_map[i][1] * NOISE_SCALE, offset);
 
-        _strip.setPixelColor(
-            i, scale_brightness(_strip.ColorHSV(map(noise, 0, 255, 0, 65535)),
-                                BACKGROUND_BRIGHTNESS));
+        _strip.setPixelColor(i, scale_brightness(_strip.ColorHSV(noise), BACKGROUND_BRIGHTNESS));
     }
 };
 

@@ -1,10 +1,15 @@
-#ifndef NOISE_H
-#define NOISE_H
 
-#include <Arduino.h>
+#ifndef Noise_h
+#define Noise_h
 
-//TODO: deze shit werkt totaal niet lmao
+extern float noise1(float x);
+extern float noise2(float x, float y);
+extern float noise3(float x, float y, float z);
+extern float noise4(float x, float y, float z, float w);
 
-uint8_t inoise8(uint16_t x, uint16_t y, uint16_t z);
+extern float pnoise1(float x, int px);
+extern float pnoise2(float x, float y, int px, int py);
+extern float pnoise3(float x, float y, float z, int px, int py, int pz);
+extern float pnoise4(float x, float y, float z, float w, int px, int py, int pz, int pw);
 
-#endif  // NOISE_H
+#endif

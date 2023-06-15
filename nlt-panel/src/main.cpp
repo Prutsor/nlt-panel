@@ -64,7 +64,7 @@ void loop()
 	display.update();
 	visualizer.update();
 
-	delay(1000);
+	delay(100);
 }
 
 void setup_wifi()

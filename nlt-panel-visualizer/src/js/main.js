@@ -55,8 +55,6 @@ document.addEventListener('alpine:init', () => {
 
 			if (!this.renderer.is_on) this.renderer.turn_on();
 
-			console.log(packet);
-
 			for (let i = 0; i < 128; i++) {
 				this.renderer.set_pixel(
 					i,
