@@ -19,6 +19,9 @@ const int SERVICE_PORT = 8266;
 const char *ssid = "McDonald's Free Wi-Fi";
 const char *password = "neebedankt";
 
+constexpr const char *NTP_SERVER = "nl.pool.ntp.org";
+constexpr const char *NTP_TZ = "CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00";
+
 const char *OWM_KEY = "cfpvlO7VmZO2GufMVAaBIkktoGS5X11P";
 
 #endif

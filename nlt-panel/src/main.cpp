@@ -6,7 +6,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 
-#include <NTPClient.h>
+#include <time.h>
 
 #include "config.h"
 #include "constants.h"
@@ -21,8 +21,8 @@ Adafruit_NeoPixel strip(STRIP_LEDS, STRIP_PIN, STRIP_TYPE);
 Display display(strip);
 Visualizer visualizer(display);
 
-WiFiUDP ntp_udp;
-NTPClient time_client(ntp_udp, "europe.pool.ntp.org", 3600, 60000);
+time_t now;
+struct tm tm;
 
 // @version 4.0.0
 
@@ -44,6 +44,9 @@ void setup()
 	Serial.println("setup_mdns():");
 	setup_mdns();
 
+	Serial.println("configTime():");
+	configTime(NTP_TZ, NTP_SERVER);
+
 	Serial.println("display.setup():");
 	display.setup();
 
@@ -56,15 +59,17 @@ void setup()
 void loop()
 {
 	MDNS.update();
-	time_client.update();
+
+	time(&now);
+	localtime_r(&now, &tm);
 
 	display.render_background();
-	display.render_time(time_client.getHours(), time_client.getMinutes(), time_client.getSeconds());
+	display.render_time(tm.tm_hour, tm.tm_min, tm.tm_sec);
 
 	display.update();
-	visualizer.update();
+	// visualizer.update();
 
-	delay(100);
+	// delay(100);
 }
 
 void setup_wifi()
