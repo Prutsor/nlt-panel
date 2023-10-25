@@ -8,6 +8,10 @@ jobs:
       matrix:
         platform: [ubuntu-20.04, windows-latest]
 
+    defaults:
+      run:
+        working-directory: ./visualizer
+
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout Code
