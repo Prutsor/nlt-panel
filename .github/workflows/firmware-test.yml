@@ -35,7 +35,5 @@ jobs:
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
-      - name: Build PlatformIO examples
-        run: pio ci --lib="." --project-conf="platformio.ini"
-        env:
-          PLATFORMIO_CI_SRC: src/main.cpp
+      - name: Build PlatformIO Project
+        run: pio run
