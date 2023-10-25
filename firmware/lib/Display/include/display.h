@@ -8,7 +8,7 @@
 #include "font.h"
 
 #include <Adafruit_NeoPixel.h>
-#include <FastLED.h> //TODO: custom noise implementation
+#include <FastLED.h> // TODO: custom noise implementation
 
 class Display
 {
@@ -32,6 +32,8 @@ class Display
 
     private:
         uint32_t scale_brightness(uint32_t color, float brightness);
+
+        bool is_wide_character(const int character[25]);
 
         int _digit_buffer[2];
 

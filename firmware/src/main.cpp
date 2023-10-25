@@ -79,6 +79,8 @@ void setup_wifi()
 	Serial.print("	Connecting");
 	while (WiFi.status() != WL_CONNECTED)
 	{
+		// TODO: show animation while connecting
+
 		delay(500);
 		Serial.print(".");
 	}

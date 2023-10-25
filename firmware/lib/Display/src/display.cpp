@@ -64,7 +64,54 @@ void Display::render_time(int hours, int minutes, int seconds)
     }
 }
 
-void Display::render_character(int offset, const int character[25]){};
+// TODO: optimize
+bool Display::is_wide_character(const int character[25])
+{
+    for (int i = 0; i < 25; i++)
+    {
+        if (character[i] > 20)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void Display::render_character(int offset, const int character[25])
+{
+    bool is_wide = is_wide_character(character);
+
+    for (int i = 0; i < 25; i++)
+    {
+        if (character[i] > 0)
+        {
+            int row = (is_wide) ? font_character_rows_wide[character[i] - 1][0]
+                                : font_character_rows[character[i] - 1][0];
+
+            int index = (is_wide) ? font_character_rows_wide[character[i] - 1][1]
+                                  : font_character_rows[character[i] - 1][1];
+
+            int row_offset = font_character_offset[row - 1][font_character_direction];
+
+            if (font_character_direction == 1)
+                row_offset = -row_offset;
+
+            if (row % 2 == 0)
+            {
+                _strip.setPixelColor(
+                    font_rows[row] + index + offset + row_offset,
+                    DIGIT_COLOR);
+            }
+            else
+            {
+                _strip.setPixelColor(
+                    font_rows[row] - index - offset - row_offset,
+                    DIGIT_COLOR);
+            }
+        }
+    }
+}
 
 uint32_t Display::scale_brightness(uint32_t color, float brightness)
 {
