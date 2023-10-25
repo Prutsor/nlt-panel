@@ -1,7 +1,0 @@
-:root {
-	background: transparent;
-}
-
-body::-webkit-scrollbar {
-	display: none;
-}
