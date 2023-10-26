@@ -77,9 +77,11 @@ void setup_wifi()
 	Serial.print("	Connecting");
 	while (WiFi.status() != WL_CONNECTED)
 	{
-		// TODO: show animation while connecting
-
+		display._strip.setPixelColor(0, WHITE_COLOR);
 		delay(500);
+		display._strip.setPixelColor(0, BLACK_COLOR);
+		delay(500);
+
 		Serial.print(".");
 	}
 	Serial.println();

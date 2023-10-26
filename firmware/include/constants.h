@@ -13,4 +13,7 @@ extern const uint16_t NOISE_SPEED;
 
 extern const uint32_t DIGIT_COLOR;
 
+extern const uint32_t WHITE_COLOR;
+extern const uint32_t BLACK_COLOR;
+
 #endif  // CONSTANTS_H
