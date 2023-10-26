@@ -36,7 +36,7 @@ jobs:
         run: pip install --upgrade platformio
 
       - name: Copy Config
-        run: cp "firmware/include/config.example.h" "firmware/include/config.h"
+        run: cp "include/config.example.h" "include/config.h"
 
       - name: Build PlatformIO Project
         run: pio run
