@@ -67,9 +67,7 @@ void loop()
 	display.render_time(tm.tm_hour, tm.tm_min, tm.tm_sec);
 
 	display.update();
-	// visualizer.update();
-
-	// delay(100);
+	visualizer.update();
 }
 
 void setup_wifi()

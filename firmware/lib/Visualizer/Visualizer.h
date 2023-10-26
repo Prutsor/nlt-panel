@@ -25,6 +25,7 @@ class Visualizer
         Display _display;
 
         uint8_t _stream_buffer[385];
+        long last_update;
 };
 
 #endif

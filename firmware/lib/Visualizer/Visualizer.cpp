@@ -15,6 +15,8 @@ void Visualizer::setup()
 	_server->setNoDelay(true);
 	_server->begin();
 
+	last_update = millis();
+
 	Serial.print("	Listening on TCP port ");
 	Serial.println(VISUALIZER_PORT);
 }
@@ -22,6 +24,7 @@ void Visualizer::setup()
 void Visualizer::update()
 {
 	if (_clients.empty()) return;
+	if (millis() - last_update < 1000/24) return;
 
 	//TODO: read raw neopixel buffer
 	//TODO: receive video stream?
@@ -42,5 +45,5 @@ void Visualizer::update()
 		client->write((char *)_stream_buffer, sizeof(_stream_buffer));
 	}
 
-	// Serial.println("	Visualizer packet sent");
+	last_update = millis();
 }
