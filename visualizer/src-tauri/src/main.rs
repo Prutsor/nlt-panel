@@ -8,7 +8,7 @@ use tokio::io;
 use window_vibrancy::apply_mica;
 
 use mdns_sd::{ServiceDaemon, ServiceEvent};
-use tokio::sync::{Mutex, Notify};
+use tokio::sync::Mutex;
 use tokio::{io::AsyncWriteExt, net::TcpStream};
 
 #[derive(Clone, Serialize, Deserialize)]
