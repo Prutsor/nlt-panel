@@ -38,8 +38,8 @@ jobs:
       - name: Copy Config
         uses: canastro/copy-file-action@master
         with:
-          source: "include/config.example.h"
-          target: "include/config.h"
+          source: "firmware/include/config.example.h"
+          target: "firmware/include/config.h"
 
       - name: Build PlatformIO Project
         run: pio run
