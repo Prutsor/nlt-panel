@@ -35,5 +35,11 @@ jobs:
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
+      - name: Copy Config
+        uses: canastro/copy-file-action@master
+        with:
+          source: "include/config.example.h"
+          target: "include/config.h"
+
       - name: Build PlatformIO Project
         run: pio run
