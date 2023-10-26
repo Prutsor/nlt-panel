@@ -13,8 +13,8 @@
 
 #include <Adafruit_NeoPixel.h>
 
-#include "display.h"
-#include "visualizer.h"
+#include "Display.h"
+#include "Visualizer.h"
 
 Adafruit_NeoPixel strip(STRIP_LEDS, STRIP_PIN, STRIP_TYPE);
 

@@ -3,7 +3,7 @@
 
 #include "Arduino.h"
 
-#include "display.h"
+#include "Display.h"
 
 #include "constants.h"
 #include "config.h"
