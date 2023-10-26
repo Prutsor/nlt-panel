@@ -27,7 +27,7 @@
 		},
 		"bundle": {
 			"active": true,
-			"targets": "all",
+			"targets": ["deb", "appimage", "nsis", "app", "dmg", "updater"],
 			"identifier": "nl.prutsor.nlt-panel",
 			"icon": [
 				"icons/32x32.png",
