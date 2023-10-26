@@ -119,7 +119,9 @@ fn main() {
         .setup(|app| {
             let window = app.get_window("main").unwrap();
 
-            apply_mica(&window).unwrap();
+            if cfg!(target_os = "windows") {
+                apply_mica(&window).unwrap();
+            }
 
             window.set_decorations(true).unwrap();
             window.show().unwrap();
