@@ -1,5 +1,8 @@
 name: PlatformIO CI
-on: [push]
+on:
+  push:
+    paths:
+      - ./firmware/**
 
 jobs:
   build:

@@ -1,5 +1,8 @@
 name: Tauri CI
-on: [push]
+on:
+  push:
+    paths:
+      - ./visualizer/**
 
 jobs:
   test-tauri:
