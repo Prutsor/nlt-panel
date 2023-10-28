@@ -78,8 +78,10 @@ void setup_wifi()
 	while (WiFi.status() != WL_CONNECTED)
 	{
 		display._strip.setPixelColor(0, WHITE_COLOR);
+		display.update();
 		delay(500);
 		display._strip.setPixelColor(0, BLACK_COLOR);
+		display.update();
 		delay(500);
 
 		Serial.print(".");
