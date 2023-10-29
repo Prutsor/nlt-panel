@@ -53,7 +53,7 @@ document.addEventListener('alpine:init', () => {
 		async stream_render(packet) {
 			if (!this.is_streaming) return;
 
-			if (!this.renderer.is_on) this.renderer.turn_on();
+			if (!this.renderer.is_on) await this.renderer.turn_on();
 
 			for (let i = 0; i < 128; i++) {
 				this.renderer.set_pixel(
@@ -73,7 +73,7 @@ document.addEventListener('alpine:init', () => {
 			await tauri.invoke('panel_start_stream', { panel });
 
 			this.is_streaming = true;
-			this.renderer.turn_on();
+			await this.renderer.turn_on();
 
 			this.menu_load_finish();
 		},
@@ -84,7 +84,7 @@ document.addEventListener('alpine:init', () => {
 			await tauri.invoke('panel_stop_stream');
 
 			this.is_streaming = false;
-			this.renderer.turn_off();
+			await this.renderer.turn_off();
 
 			this.menu_load_finish();
 		},

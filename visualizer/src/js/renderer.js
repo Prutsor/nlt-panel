@@ -16,7 +16,7 @@ export const setup = async () => {
 	bloomLayer.set(BLOOM_SCENE);
 
 	let params = {
-		threshold: 0,
+		threshold: 1,
 		strength: 0.1,
 		radius: 0,
 		exposure: 1.5,
@@ -53,6 +53,9 @@ export const setup = async () => {
 	);
 	const model = await tauri.fs.readTextFile(model_resource);
 
+	let default_material; 
+	let set_default_material;
+	let unset_default_material;;
 	let hexagon_materials = [];
 
 	const model_load = new Promise((resolve, reject) => {
@@ -128,25 +131,36 @@ export const setup = async () => {
 				hexagons.push(...hexagon_row);
 			}
 
-			console.log(hexagons);
+			default_material = hexagons[0].material;
 
 			for await (const [index, hexagon] of Object.entries(hexagons)) {
 				hexagon.layers.enable(BLOOM_SCENE);
 
 				const color = new THREE.Color();
-				color.setHSL(index / 128, 0.5, 0.5);
+				color.setRGB(hexagon.material.color.r, hexagon.material.color.g, hexagon.material.color.b);
 
 				const material = new THREE.MeshBasicMaterial({ color: color });
 
-				hexagon.material = material;
-				hexagon_materials[index] = hexagon.material;
+				hexagon_materials[index] = material;
 			}
 
 			for await (const hexagon of hexagon_caps) {
 				hexagon.layers.enable(BLOOM_SCENE);
+
+				// TODO: apply color to caps
 			}
 
-			console.log(hexagon_materials)
+			unset_default_material = async () => {
+				for await (const [index, hexagon] of Object.entries(hexagons)) {
+					hexagon.material = hexagon_materials[index];
+				}
+			};
+			
+			set_default_material = async () => {
+				for await (const [index, hexagon] of Object.entries(hexagons)) {
+					hexagon.material = default_material;
+				}
+			};
 
 			scene.add(model);
 
@@ -224,12 +238,14 @@ export const setup = async () => {
 		finalComposer.render();
 	};
 
-	const turn_on = () => {
+	const turn_on = async () => {
 		bloomPass.threshold = 0;
+		await unset_default_material();
 		render();
 	};
-	const turn_off = () => {
+	const turn_off = async () => {
 		bloomPass.threshold = 1;
+		await set_default_material();
 		render();
 	};
 
