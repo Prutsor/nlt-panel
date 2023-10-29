@@ -2,7 +2,7 @@ name: Tauri CI
 on:
   push:
     paths:
-      - ./visualizer/**
+      - 'visualizer/**'
 
 jobs:
   test-tauri:
