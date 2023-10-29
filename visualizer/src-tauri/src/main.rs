@@ -10,8 +10,9 @@ use tokio::io;
 use window_vibrancy::apply_mica;
 
 use mdns_sd::{ServiceDaemon, ServiceEvent};
+use tokio::task::JoinHandle;
+use tokio::net::TcpStream;
 use tokio::sync::Mutex;
-use tokio::{io::AsyncWriteExt, net::TcpStream};
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Panel {
@@ -25,7 +26,8 @@ pub struct Panel {
 #[derive(Default)]
 struct AppState {
     panels: Vec<Panel>,
-    tcp_client: Option<TcpStream>,
+
+    stream: Option<JoinHandle<()>>,
 }
 
 #[tauri::command]
@@ -50,58 +52,43 @@ async fn panel_start_stream(
     state: tauri::State<'_, Arc<Mutex<AppState>>>,
     panel: Panel,
 ) -> Result<(), String> {
-    let mut state = state.lock().await;
-
-    if state.tcp_client.is_none() {
-        println!("starting stream {}", panel.ip.unwrap().to_string());
-
+    let stream = tokio::spawn(async move {
         let client = TcpStream::connect((panel.ip.unwrap().to_string(), 1935))
             .await
             .unwrap();
 
-        state.tcp_client = Some(client);
+        let mut buffer = vec![0; 1024];
+        loop {
+            client.readable().await.unwrap();
 
-        tokio::spawn(async move {
-            let state = window.state::<Arc<Mutex<AppState>>>().inner().lock().await;
-            let client = state.tcp_client.as_ref().unwrap();
+            match client.try_read(&mut buffer) {
+                Ok(n) => {
+                    buffer.truncate(n);
 
-            let mut buffer = vec![0; 1024];
-            loop {
-                client.readable().await.unwrap();
+                    println!("packet size: {}", n);
 
-                match client.try_read(&mut buffer) {
-                    Ok(n) => {
-                        buffer.truncate(n);
-
-                        println!("packet size: {}", n);
-
-                        // Send the received buffer to the window
-                        window.emit("stream_data", buffer.clone()).unwrap();
-                    }
-                    Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
-                        continue;
-                    }
-                    Err(e) => {
-                        eprintln!("Failed to read from TCP stream: {}", e);
-                        break;
-                    }
+                    window.emit("stream_data", buffer.clone()).unwrap();
+                }
+                Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
+                    continue;
+                }
+                Err(e) => {
+                    eprintln!("Failed to read from TCP stream: {}", e);
+                    break;
                 }
             }
-        });
-    }
+        }
+    });
+
+    state.lock().await.stream = Some(stream);
 
     Ok(())
 }
 
 #[tauri::command]
 async fn panel_stop_stream(state: tauri::State<'_, Arc<Mutex<AppState>>>) -> Result<(), String> {
-    let mut state = state.lock().await;
-
-    if let Some(mut client) = state.tcp_client.take() {
-        // Close the TCP client connection
-        if let Err(err) = client.shutdown().await {
-            eprintln!("Failed to close TCP client connection: {}", err);
-        }
+    if let Some(client) = state.lock().await.stream.take() {
+        client.abort();
     }
 
     Ok(())
@@ -153,7 +140,14 @@ fn main() {
                                     .get_properties()
                                     .get("version")
                                     .and_then(|value| Some(value.val_str().to_string())),
-                                ip: Some(info.get_addresses_v4().iter().next().unwrap().to_owned().clone()),
+                                ip: Some(
+                                    info.get_addresses_v4()
+                                        .iter()
+                                        .next()
+                                        .unwrap()
+                                        .to_owned()
+                                        .clone(),
+                                ),
                                 port: info.get_port(),
                             };
 
