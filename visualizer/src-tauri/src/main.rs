@@ -153,7 +153,7 @@ fn main() {
                                     .get_properties()
                                     .get("version")
                                     .and_then(|value| Some(value.val_str().to_string())),
-                                ip: Some(info.get_addresses().iter().next().unwrap().clone()),
+                                ip: Some(info.get_addresses_v4().iter().next().unwrap().to_owned().clone()),
                                 port: info.get_port(),
                             };
 
