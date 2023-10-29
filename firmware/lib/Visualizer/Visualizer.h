@@ -8,7 +8,7 @@
 #include "constants.h"
 #include "config.h"
 
-#include <ESPAsyncTCP.h>
+#include <ESP8266WiFi.h>
 
 class Visualizer
 {
@@ -19,8 +19,8 @@ class Visualizer
         void update();
 
     private:
-        AsyncServer *_server;
-        static std::vector<AsyncClient *> _clients;
+        WiFiServer *_server;
+        WiFiClient _client;
 
         Display _display;
 
