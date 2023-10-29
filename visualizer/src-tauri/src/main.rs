@@ -5,6 +5,8 @@ use std::{net::Ipv4Addr, sync::Arc};
 use serde::{Deserialize, Serialize};
 use tauri::Manager;
 use tokio::io;
+
+#[cfg(target_os = "windows")]
 use window_vibrancy::apply_mica;
 
 use mdns_sd::{ServiceDaemon, ServiceEvent};
@@ -119,9 +121,8 @@ fn main() {
         .setup(|app| {
             let window = app.get_window("main").unwrap();
 
-            if cfg!(target_os = "windows") {
-                apply_mica(&window).unwrap();
-            }
+            #[cfg(target_os = "windows")]
+            let _ = apply_mica(&window, Some(true)); // TODO: check for dark mode
 
             window.set_decorations(true).unwrap();
             window.show().unwrap();
