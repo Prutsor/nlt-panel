@@ -20,7 +20,7 @@
 	"dependencies": {
 		"bonjour": "^3.5.0",
 		"color-blend": "^4.0.0",
-		"electron": "^22.1.0",
+		"electron": "^26.6.8",
 		"five-server": "^0.1.9"
 	}
 }
