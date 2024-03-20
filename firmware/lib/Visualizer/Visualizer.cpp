@@ -17,9 +17,10 @@ void Visualizer::update()
 		_client = _server.accept();
 	}
 
-	if (millis() - last_update < 1000 / 24) return;
 	if (!_client) return;
 	if (!_client.availableForWrite()) return;
+
+	if (millis() - last_update < 1000 / 24) return;
 
 	// TODO: read raw neopixel buffer
 	// TODO: receive video stream?
@@ -36,6 +37,7 @@ void Visualizer::update()
 	}
 
 	_client.write(_stream_buffer, sizeof(_stream_buffer));
+	_client.flush();
 
 	last_update = millis();
 }
