@@ -85,6 +85,21 @@
 
 		<div x-cloak x-show="show_panel" x-transition>
 			<div id="panel" class="absolute"></div>
+
+			<div class="absolute space-y-1 top-2 left-4">
+				<div>
+					<span class="text-sm font-medium text-white">Runtime:</span>
+					<span class="text-sm font-medium text-white/50" x-text="metadata.time || '?'"></span>
+					<span class="text-sm font-medium text-white/50">ms</span>
+				</div>
+				<div>
+					<span class="text-sm font-medium text-white">Heap:</span>
+					<span class="text-sm font-medium text-white/50" x-text="`free = ${metadata.heap_free || '?'}`"></span>
+					<span class="text-sm font-medium text-white/50" x-text="`max = ${metadata.heap_max || '?'}`"></span>
+					<span class="text-sm font-medium text-white/50" x-text="`frag = ${metadata.heap_frag || '?'}%`"></span>
+				</div>
+			</div>
+
 			<div class="absolute space-x-2 top-2 right-4">
 				<button
 					@click="menu_select_panel"

@@ -20,24 +20,55 @@ void Visualizer::update()
 	if (!_client) return;
 	if (!_client.availableForWrite()) return;
 
-	if (millis() - last_update < 1000 / 24) return;
+	if (millis() - last_metadata > 1000 / 24) {
+		_metadata_buffer[0] = 0x02;
 
-	// TODO: read raw neopixel buffer
-	// TODO: receive video stream?
+		uint32_t time = millis();
 
-	_stream_buffer[0] = 0x01;
+		uint32_t heap_free = 0;
+		uint32_t heap_max = 0;
+		uint8_t heap_frag = 0;
 
-	for (int i = 0; i < STRIP_LEDS; i++)
-	{
-		uint32_t color = _display._strip.getPixelColor(i);
+		ESP.getHeapStats(&heap_free, &heap_max, &heap_frag);
 
-		_stream_buffer[i * 3 + 1] = (color >> 16) & 0xff;
-		_stream_buffer[i * 3 + 2] = (color >> 8) & 0xff;
-		_stream_buffer[i * 3 + 3] = color & 0xff;
+		_insert_buffer(_metadata_buffer, &time, 4, 1);
+		_insert_buffer(_metadata_buffer, &heap_free, 4, 5);
+		_insert_buffer(_metadata_buffer, &heap_max, 4, 9);
+		_metadata_buffer[13] = heap_frag;
+
+		_client.write(_metadata_buffer, sizeof(_metadata_buffer));
+
+		last_metadata = millis();
 	}
 
-	_client.write(_stream_buffer, sizeof(_stream_buffer));
-	_client.flush();
+	if (millis() - last_update > 1000 / 20) {
+		// TODO: read raw neopixel buffer
+		// TODO: receive video stream?
 
-	last_update = millis();
+		_stream_buffer[0] = 0x01;
+
+		for (int i = 0; i < STRIP_LEDS; i++)
+		{
+			uint32_t color = _display._strip.getPixelColor(i);
+
+			_stream_buffer[i * 3 + 1] = (color >> 16) & 0xff;
+			_stream_buffer[i * 3 + 2] = (color >> 8) & 0xff;
+			_stream_buffer[i * 3 + 3] = color & 0xff;
+		}
+
+		// _client.write(_stream_buffer, sizeof(_stream_buffer));
+
+		last_update = millis();
+	}
+
+	_client.flush();
 }
+
+void Visualizer::_insert_buffer(uint8_t *buffer, const uint32_t *data, uint8_t size, uint8_t offset)
+{
+	for (int i = 0; i < size; i++)
+	{
+		buffer[i + offset] = (*data >> (i * 8));
+	}
+}
+

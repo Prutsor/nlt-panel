@@ -15,6 +15,8 @@ document.addEventListener('alpine:init', () => {
 		show_panel: false,
 		show_select_panel: false,
 
+		metadata: {},
+
 		async init() {
 			this.menu_load_start();
 
@@ -36,6 +38,25 @@ document.addEventListener('alpine:init', () => {
 			tauri.event.listen('stream_data', (event) =>
 				this.stream_render(event.payload)
 			);
+
+			const combine_bits = (b0, b1, b2, b3) => (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
+
+			tauri.event.listen('stream_metadata', (event) => {
+				const packet = event.payload;
+
+				const time = combine_bits(packet[1], packet[2], packet[3], packet[4])
+
+				const heap_free = combine_bits(packet[5], packet[6], packet[7], packet[8]);
+				const heap_max = combine_bits(packet[9], packet[10], packet[11], packet[12]);
+				const heap_frag = packet[13];
+
+				this.metadata = {
+					time,
+					heap_free,
+					heap_max,
+					heap_frag,
+				};
+			});
 
 			this.versions[await tauri.app.getName()] =
 				await tauri.app.getVersion();
