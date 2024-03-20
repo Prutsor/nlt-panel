@@ -19,7 +19,7 @@ class Visualizer
         void update();
 
     private:
-        WiFiServer *_server;
+        WiFiServer _server;
         WiFiClient _client;
 
         Display _display;

@@ -1,28 +1,28 @@
 #include "Visualizer.h"
 
-Visualizer::Visualizer(Display display) : _display(display) {}
+#include <WiFiServer.h>
+
+Visualizer::Visualizer(Display display) : _server(WiFiServer(VISUALIZER_PORT)), _display(display) {}
 
 void Visualizer::setup()
 {
-	WiFiServer* _server = new WiFiServer(VISUALIZER_PORT);
-
-	_server->setNoDelay(true);	
-	_server->begin();
+	_server.setNoDelay(true);
+	_server.begin();
 }
 
 void Visualizer::update()
 {
-	if (_server->hasClient()) 
+	if (_server.hasClient())
 	{
-		_client = _server->accept();
+		_client = _server.accept();
 	}
 
-	if (millis() - last_update < 1000/24) return;
+	if (millis() - last_update < 1000 / 24) return;
 	if (!_client) return;
 	if (!_client.availableForWrite()) return;
 
-	//TODO: read raw neopixel buffer
-	//TODO: receive video stream?
+	// TODO: read raw neopixel buffer
+	// TODO: receive video stream?
 
 	_stream_buffer[0] = 0x01;
 
