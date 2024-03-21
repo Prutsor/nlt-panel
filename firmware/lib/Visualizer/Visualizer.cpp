@@ -20,7 +20,7 @@ void Visualizer::update()
 	if (!_client) return;
 	if (!_client.availableForWrite()) return;
 
-	if (millis() - last_metadata > 1000 / 24) {
+	if (millis() - last_metadata > 1000 / 10) {
 		_metadata_buffer[0] = 0x02;
 
 		uint32_t time = millis();
@@ -37,11 +37,12 @@ void Visualizer::update()
 		_metadata_buffer[13] = heap_frag;
 
 		_client.write(_metadata_buffer, sizeof(_metadata_buffer));
+		_client.flush();
 
 		last_metadata = millis();
 	}
 
-	if (millis() - last_update > 1000 / 20) {
+	if (millis() - last_update > 1000 / 24) {
 		// TODO: read raw neopixel buffer
 		// TODO: receive video stream?
 
@@ -56,7 +57,8 @@ void Visualizer::update()
 			_stream_buffer[i * 3 + 3] = color & 0xff;
 		}
 
-		// _client.write(_stream_buffer, sizeof(_stream_buffer));
+		_client.write(_stream_buffer, sizeof(_stream_buffer));
+		_client.flush();
 
 		last_update = millis();
 	}

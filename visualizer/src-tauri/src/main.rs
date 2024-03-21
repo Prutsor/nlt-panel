@@ -57,30 +57,26 @@ async fn panel_start_stream(
             .await
             .unwrap();
 
-        let mut buffer = vec![0; 1024];
         loop {
             client.readable().await.unwrap();
+
+            let mut buffer = vec![0; 1024];
 
             match client.try_read(&mut buffer) {
                 Ok(n) => {
                     buffer.truncate(n);
 
-                    println!("Received packet with id {}", buffer[0]);
-                    println!("Packet: {:?}", buffer);
-
-                    if buffer[0] == 0x01 {
-                        // TODO: figure out why the stream is sometimes getting corrupted
-                        if n < 100 {
-                            eprintln!("Stream corrupted, expected ~385 bytes, got: {}", n);
-                            // break;
+                    match buffer[0] {
+                        0x01 => {
+                            window.emit("stream_data", buffer.clone()).unwrap();
                         }
-
-                        window.emit("stream_data", buffer.clone()).unwrap();
-                    } else if buffer[0] == 0x02 {
-                        window.emit("stream_metadata", buffer.clone()).unwrap();
-                    } else {
-                        eprintln!("Unknown packet type: {}", buffer[0]);
-                        break;
+                        0x02 => {
+                            window.emit("stream_metadata", buffer.clone()).unwrap();
+                        }
+                        _ => {
+                            eprintln!("Unknown packet type: {}", buffer[0]);
+                            break;
+                        }
                     }
                 }
                 Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
