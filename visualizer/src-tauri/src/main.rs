@@ -68,14 +68,15 @@ async fn panel_start_stream(
 
                     match buffer[0] {
                         0x01 => {
-                            window.emit("stream_data", buffer.clone()).unwrap();
+                            if buffer.len() > 255 {
+                                window.emit("stream_data", buffer.clone()).unwrap();
+                            }
                         }
                         0x02 => {
                             window.emit("stream_metadata", buffer.clone()).unwrap();
                         }
                         _ => {
                             eprintln!("Unknown packet type: {}", buffer[0]);
-                            break;
                         }
                     }
                 }
