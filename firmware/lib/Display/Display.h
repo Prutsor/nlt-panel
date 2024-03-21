@@ -13,7 +13,7 @@
 class Display
 {
     public:
-        Display(Adafruit_NeoPixel &strip);
+        explicit Display(Adafruit_NeoPixel &strip);
 
         Adafruit_NeoPixel &_strip; // TODO: abstract
 
@@ -31,15 +31,15 @@ class Display
         void update();
 
     private:
-        uint32_t scale_brightness(uint32_t color, float brightness);
+        static uint32_t scale_brightness(uint32_t color, float brightness);
 
-        bool is_wide_character(const int character[25]);
+        static bool is_wide_character(const int character[25]);
 
         int _digit_buffer[2];
 
-        unsigned long _last_time;
-        unsigned long _delta;
-        uint16_t _hue;
+        unsigned long _last_time{};
+        unsigned long _delta{};
+        uint16_t _hue{};
 };
 
 #endif

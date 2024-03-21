@@ -10,7 +10,7 @@ void Display::setup()
     _last_time = millis();
 }
 
-void Display::int_to_digit(int time)
+void Display::int_to_digit(const int time)
 {
     if (time > 9)
     {
@@ -24,7 +24,7 @@ void Display::int_to_digit(int time)
     }
 };
 
-void Display::render_digit(int offset, const int digit[10])
+void Display::render_digit(const int offset, const int digit[10])
 {
     for (int i = 0; i < 10; i++)
     {
@@ -45,7 +45,7 @@ void Display::render_digit(int offset, const int digit[10])
     }
 };
 
-void Display::render_time(int hours, int minutes, int seconds)
+void Display::render_time(const int hours, const int minutes, const int seconds)
 {
     int_to_digit(hours);
 
@@ -78,7 +78,7 @@ bool Display::is_wide_character(const int character[25])
     return false;
 }
 
-void Display::render_character(int offset, const int character[25])
+void Display::render_character(const int offset, const int character[25])
 {
     bool is_wide = is_wide_character(character);
 
@@ -113,7 +113,7 @@ void Display::render_character(int offset, const int character[25])
     }
 }
 
-uint32_t Display::scale_brightness(uint32_t color, float brightness)
+uint32_t Display::scale_brightness(const uint32_t color, float brightness)
 {
     uint8_t r = (color >> 16) & 0xFF;
     uint8_t g = (color >> 8) & 0xFF;
@@ -128,19 +128,19 @@ uint32_t Display::scale_brightness(uint32_t color, float brightness)
 
 void Display::render_background()
 {
-    uint32_t offset = millis() * NOISE_SPEED;
+    const uint32_t offset = millis() * NOISE_SPEED;
 
     for (int i = 0; i < STRIP_LEDS; i++)
     {
-        uint16_t noise = inoise16(noise_map[i][0] * NOISE_SCALE, noise_map[i][1] * NOISE_SCALE, offset);
+        const uint16_t noise = inoise16(noise_map[i][0] * NOISE_SCALE, noise_map[i][1] * NOISE_SCALE, offset);
 
-        _strip.setPixelColor(i, scale_brightness(_strip.ColorHSV(noise), BACKGROUND_BRIGHTNESS));
+        _strip.setPixelColor(i, scale_brightness(Adafruit_NeoPixel::ColorHSV(noise), BACKGROUND_BRIGHTNESS));
     }
 };
 
 void Display::update()
 {
-    unsigned long time = millis();
+    const unsigned long time = millis();
     _delta = time - _last_time;
 
     _hue = _hue + (_delta * BACKGROUND_SPEED);

@@ -26,9 +26,9 @@ struct tm tm;
 
 // @version 4.0.0
 
-const uint8_t MAJOR = 4;
-const uint8_t MINOR = 0;
-const uint8_t PATCH = 0;
+constexpr uint8_t MAJOR = 4;
+constexpr uint8_t MINOR = 0;
+constexpr uint8_t PATCH = 0;
 
 void setup_wifi();
 void setup_mdns();
@@ -77,13 +77,7 @@ void setup_wifi()
 	Serial.print("	Connecting");
 	while (WiFi.status() != WL_CONNECTED)
 	{
-		display._strip.setPixelColor(0, WHITE_COLOR);
-		display.update();
-		delay(500);
-		display._strip.setPixelColor(0, BLACK_COLOR);
-		display.update();
-		delay(500);
-
+		delay(100);
 		Serial.print(".");
 	}
 	Serial.println();
