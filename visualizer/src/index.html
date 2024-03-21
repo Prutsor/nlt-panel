@@ -86,7 +86,7 @@
 		<div x-cloak x-show="show_panel" x-transition>
 			<div id="panel" class="absolute"></div>
 
-			<div class="absolute space-y-1 top-2 left-4">
+			<div class="absolute space-y-1 top-2 left-4" x-show="is_streaming && show_metadata">
 				<div>
 					<span class="text-sm font-medium text-white">Runtime:</span>
 					<span class="text-sm font-medium text-white/50" x-text="metadata.time || '?'"></span>
@@ -113,9 +113,10 @@
 					@click="menu_select_panel"
 					type="button"
 					class="rounded-lg border border-gray-300/5 bg-white/5 p-3 text-center text-sm font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5"
+					:class="{'bg-white/10': is_streaming}"
 				>
 					<svg
-						class="h-4 w-4"
+						class="h-4 w-4 feather feather-cast"
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
 						height="24"
@@ -125,7 +126,6 @@
 						stroke-width="2"
 						stroke-linecap="round"
 						stroke-linejoin="round"
-						class="feather feather-cast"
 					>
 						<path
 							d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"
@@ -134,12 +134,13 @@
 					</svg>
 				</button>
 				<button
-					@click="menu_info"
+					@click="show_metadata = !show_metadata"
 					type="button"
 					class="rounded-lg border border-gray-300/5 bg-white/5 p-3 text-center text-sm font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5"
+					:class="{'bg-white/10': is_streaming && show_metadata}"
 				>
 					<svg
-						class="h-4 w-4"
+						class="h-4 w-4 feather feather-info"
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
 						height="24"
@@ -149,7 +150,6 @@
 						stroke-width="2"
 						stroke-linecap="round"
 						stroke-linejoin="round"
-						class="feather feather-info"
 					>
 						<circle cx="12" cy="12" r="10"></circle>
 						<line x1="12" y1="16" x2="12" y2="12"></line>
@@ -162,7 +162,7 @@
 					class="rounded-lg border border-gray-300/5 bg-white/5 p-3 text-center text-sm font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5"
 				>
 					<svg
-						class="h-4 w-4"
+						class="h-4 w-4 feather feather-settings"
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
 						height="24"
@@ -172,7 +172,6 @@
 						stroke-width="2"
 						stroke-linecap="round"
 						stroke-linejoin="round"
-						class="feather feather-settings"
 					>
 						<circle cx="12" cy="12" r="3"></circle>
 						<path

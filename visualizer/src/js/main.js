@@ -16,6 +16,7 @@ document.addEventListener('alpine:init', () => {
 		show_select_panel: false,
 
 		metadata: {},
+		show_metadata: false,
 
 		async init() {
 			this.menu_load_start();
