@@ -44,19 +44,22 @@ document.addEventListener('alpine:init', () => {
 			tauri.event.listen('stream_metadata', (event) => {
 				const packet = event.payload;
 
-				const time = combine_bits(packet[1], packet[2], packet[3], packet[4])
+				this.metadata.time = combine_bits(packet[1], packet[2], packet[3], packet[4])
 
-				const heap_free = combine_bits(packet[5], packet[6], packet[7], packet[8]);
-				const heap_max = combine_bits(packet[9], packet[10], packet[11], packet[12]);
-				const heap_frag = packet[13];
+				this.metadata.heap_free = combine_bits(packet[5], packet[6], packet[7], packet[8]);
+				this.metadata.heap_max = combine_bits(packet[9], packet[10], packet[11], packet[12]);
+				this.metadata.heap_frag = packet[13];
 
-				this.metadata = {
-					time,
-					heap_free,
-					heap_max,
-					heap_frag,
-				};
+				this.metadata.signal_strength = packet[14];
 			});
+
+			this.metadata.fps_display = 0;
+			this.metadata.fps = 0;
+
+			setInterval(async () => {
+				this.metadata.fps_display = this.metadata.fps;
+				this.metadata.fps = 0;
+			}, 1000);
 
 			this.versions[await tauri.app.getName()] =
 				await tauri.app.getVersion();
@@ -86,6 +89,8 @@ document.addEventListener('alpine:init', () => {
 			}
 
 			this.renderer.render();
+
+			this.metadata.fps++;
 		},
 
 		async stream_start(panel) {

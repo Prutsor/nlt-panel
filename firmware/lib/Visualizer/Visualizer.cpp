@@ -20,21 +20,23 @@ void Visualizer::update()
 	if (!_client) return;
 	if (!_client.availableForWrite()) return;
 
-	if (millis() - last_metadata > 1000 / 10) {
+	if (millis() - last_metadata > 1000 / 2) {
 		_metadata_buffer[0] = 0x02;
 
-		uint32_t time = millis();
+		const uint32_t time = millis();
 
 		uint32_t heap_free = 0;
 		uint32_t heap_max = 0;
 		uint8_t heap_frag = 0;
 
-		ESP.getHeapStats(&heap_free, &heap_max, &heap_frag);
+		EspClass::getHeapStats(&heap_free, &heap_max, &heap_frag);
 
 		_insert_buffer(_metadata_buffer, &time, 4, 1);
 		_insert_buffer(_metadata_buffer, &heap_free, 4, 5);
 		_insert_buffer(_metadata_buffer, &heap_max, 4, 9);
 		_metadata_buffer[13] = heap_frag;
+
+		_metadata_buffer[14] = signal_strength();
 
 		_client.write(_metadata_buffer, sizeof(_metadata_buffer));
 		_client.flush();
@@ -50,7 +52,7 @@ void Visualizer::update()
 
 		for (int i = 0; i < STRIP_LEDS; i++)
 		{
-			uint32_t color = _display._strip.getPixelColor(i);
+			const uint32_t color = _display._strip.getPixelColor(i);
 
 			_stream_buffer[i * 3 + 1] = (color >> 16) & 0xff;
 			_stream_buffer[i * 3 + 2] = (color >> 8) & 0xff;
@@ -62,11 +64,9 @@ void Visualizer::update()
 
 		last_update = millis();
 	}
-
-	_client.flush();
 }
 
-void Visualizer::_insert_buffer(uint8_t *buffer, const uint32_t *data, uint8_t size, uint8_t offset)
+void Visualizer::_insert_buffer(uint8_t *buffer, const uint32_t *data, const uint8_t size, const uint8_t offset)
 {
 	for (int i = 0; i < size; i++)
 	{
@@ -74,3 +74,14 @@ void Visualizer::_insert_buffer(uint8_t *buffer, const uint32_t *data, uint8_t s
 	}
 }
 
+uint8_t Visualizer::signal_strength()
+{
+	const int8_t dBm = WiFi.RSSI();
+
+	if (dBm <= -100)
+		return 0;
+	if (dBm >= -50)
+		return 100;
+
+	return 2 * (dBm + 100);
+}

@@ -13,7 +13,7 @@
 class Visualizer
 {
     public:
-        Visualizer(Display display);
+        explicit Visualizer(Display display);
 
         void setup();
         void update();
@@ -24,13 +24,14 @@ class Visualizer
 
         Display _display;
 
-        uint8_t _stream_buffer[385];
-        uint8_t _metadata_buffer[14];
+        uint8_t _stream_buffer[385]{};
+        uint8_t _metadata_buffer[15]{};
 
         static void _insert_buffer(uint8_t *buffer, const uint32_t *data, uint8_t size, uint8_t offset);
+        static uint8_t signal_strength();
 
-        unsigned long last_update;
-        unsigned long last_metadata;
+        unsigned long last_update{};
+        unsigned long last_metadata{};
 };
 
 #endif
