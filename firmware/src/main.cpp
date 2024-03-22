@@ -1,6 +1,7 @@
 #include <config.h>
 
 #include <Arduino.h>
+#include <ArduinoOTA.h>
 
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
@@ -53,12 +54,16 @@ void setup()
 	Serial.println("visualizer.setup():");
 	visualizer.setup();
 
+	Serial.println("ArduinoOTA.begin():");
+	ArduinoOTA.begin(false);
+
 	Serial.println("setup(): Done!");
 }
 
 void loop()
 {
 	MDNS.update();
+	ArduinoOTA.handle();
 
 	time(&now);
 	localtime_r(&now, &tm);
