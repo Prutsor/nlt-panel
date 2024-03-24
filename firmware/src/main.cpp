@@ -7,6 +7,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 
+#include <Logger.h>
 #include <time.h>
 
 #include "config.h"
@@ -17,47 +18,63 @@
 #include "Display.h"
 #include "Visualizer.h"
 
-Adafruit_NeoPixel strip(STRIP_LEDS, STRIP_PIN, STRIP_TYPE);
-
-Display display(strip);
-Visualizer visualizer(display);
-
-time_t now;
-struct tm tm;
-
 // @version 4.0.0
 
 constexpr uint8_t MAJOR = 4;
 constexpr uint8_t MINOR = 0;
 constexpr uint8_t PATCH = 0;
 
-void setup_wifi();
-void setup_mdns();
+Adafruit_NeoPixel strip(STRIP_LEDS, STRIP_PIN, STRIP_TYPE);
+
+Display display(strip);
+Visualizer visualizer(display);
+
+logging::Logger logger;
+
+time_t now;
+tm tm;
 
 void setup()
 {
-	Serial.begin(115200);
-	Serial.println();
+	const unsigned long start = millis();
 
-	Serial.println("setup_wifi():");
-	setup_wifi();
+	logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "WIFI", "Setting up WiFi (SSID: %s)", ssid);
 
-	Serial.println("setup_mdns():");
-	setup_mdns();
+	WiFi.begin(ssid, password);
 
-	Serial.println("configTime():");
-	configTime(NTP_TZ, NTP_SERVER);
+	logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "DISPLAY", "Setting up display");
 
-	Serial.println("display.setup():");
 	display.setup();
 
-	Serial.println("visualizer.setup():");
+	logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "WIFI", "Waiting for WiFi connection");
+
+	while (WiFi.status() != WL_CONNECTED)
+	{
+		delay(100);
+	}
+
+	logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "WIFI", "Connected, IP address: %s", WiFi.localIP().toString().c_str());
+
+	logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "MDNS", "Setting up MDNS (Service name: %s)", SERVICE_NAME);
+
+	if (!MDNS.begin(SERVICE_NAME))
+	{
+		logger.log(logging::LoggerLevel::LOGGER_LEVEL_ERROR, "MDNS", "Error setting up MDNS responder!");
+	}
+
+	MDNS.addService("nlt-panel", "tcp", SERVICE_PORT);
+	MDNS.addServiceTxt("nlt-panel", "tcp", "version", (String)MAJOR + "." + (String)MINOR + "." + (String)PATCH);
+
+	logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "NTP", "Setting up NTP (Server: %s, TZ: %s)", NTP_SERVER, NTP_TZ);
+	configTime(NTP_TZ, NTP_SERVER);
+
+	logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "VISUALIZER", "Setting up visualizer (Port: %d)", VISUALIZER_PORT);
 	visualizer.setup();
 
-	Serial.println("ArduinoOTA.begin():");
+	logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "OTA", "Setting up OTA");
 	ArduinoOTA.begin(false);
 
-	Serial.println("setup(): Done!");
+	logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "SETUP", "Done! Took %d ms", millis() - start);
 }
 
 void loop()
@@ -73,31 +90,4 @@ void loop()
 
 	display.update();
 	visualizer.update();
-}
-
-void setup_wifi()
-{
-	WiFi.begin(ssid, password);
-
-	Serial.print("	Connecting");
-	while (WiFi.status() != WL_CONNECTED)
-	{
-		delay(100);
-		Serial.print(".");
-	}
-	Serial.println();
-
-	Serial.print("	Connected, IP address: ");
-	Serial.println(WiFi.localIP());
-}
-
-void setup_mdns()
-{
-	if (!MDNS.begin(SERVICE_NAME))
-	{
-		Serial.println("	Error setting up MDNS responder!");
-	}
-
-	MDNS.addService("nlt-panel", "tcp", SERVICE_PORT);
-	MDNS.addServiceTxt("nlt-panel", "tcp", "version", (String)MAJOR + "." + (String)MINOR + "." + (String)PATCH);
 }

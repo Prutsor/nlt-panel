@@ -5,7 +5,23 @@ Display::Display(Adafruit_NeoPixel &strip) : _strip(strip), _digit_buffer{0, 0} 
 void Display::setup()
 {
     _strip.begin();
-    _strip.show();
+
+    // for (int i = 0; i < STRIP_LEDS; i++)
+    // {
+    //     _strip.setPixelColor(i, 0);
+    // }
+    //
+    // for (int i = 0; i < STRIP_LEDS; i++)
+    // {
+    //     _strip.setPixelColor(i, 0xFFFFFF);
+    //     _strip.show();
+    //
+    //     delay(25);
+    // }
+
+    // _strip.setPixelColor(0, 0xFFFFFF);
+
+    // _strip.show();
 
     _last_time = millis();
 }
@@ -30,8 +46,8 @@ void Display::render_digit(const int offset, const int digit[10])
     {
         if (digit[i] > 0)
         {
-            int row = font_digit_rows[digit[i] - 1][0];
-            int index = font_digit_rows[digit[i] - 1][1];
+            const int row = font_digit_rows[digit[i] - 1][0];
+            const int index = font_digit_rows[digit[i] - 1][1];
 
             if (row % 2 == 0)
             {
@@ -80,7 +96,7 @@ bool Display::is_wide_character(const int character[25])
 
 void Display::render_character(const int offset, const int character[25])
 {
-    bool is_wide = is_wide_character(character);
+    const bool is_wide = is_wide_character(character);
 
     for (int i = 0; i < 25; i++)
     {
