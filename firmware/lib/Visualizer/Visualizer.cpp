@@ -20,6 +20,8 @@ void Visualizer::update()
 	if (!_client) return;
 	if (!_client.availableForWrite()) return;
 
+	bool written = false;
+
 	if (millis() - last_metadata > 1000 / 2) {
 		_metadata_buffer[0] = 0x02;
 
@@ -39,7 +41,7 @@ void Visualizer::update()
 		_metadata_buffer[14] = signal_strength();
 
 		_client.write(_metadata_buffer, sizeof(_metadata_buffer));
-		_client.flush();
+		written = true;
 
 		last_metadata = millis();
 	}
@@ -60,10 +62,12 @@ void Visualizer::update()
 		}
 
 		_client.write(_stream_buffer, sizeof(_stream_buffer));
-		_client.flush();
+		written = true;
 
 		last_update = millis();
 	}
+
+	if (written) _client.flush();
 }
 
 void Visualizer::_insert_buffer(uint8_t *buffer, const uint32_t *data, const uint8_t size, const uint8_t offset)

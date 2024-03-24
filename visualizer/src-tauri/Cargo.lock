@@ -1689,7 +1689,7 @@ checksum = "e4a24736216ec316047a1fc4252e27dabb04218aa4a3f37c6e7ddbf1f9782b54"
 
 [[package]]
 name = "nlt-panel-visualizer"
-version = "4.0.0-rc.1"
+version = "4.0.0"
 dependencies = [
  "mdns-sd",
  "serde",
