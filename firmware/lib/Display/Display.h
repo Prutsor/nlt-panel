@@ -25,6 +25,7 @@ class Display
         void render_time(int hours, int minutes, int seconds);
 
         void render_character(int offset, const int character[25]);
+        void render_text(const char *text);
 
         void render_background();
 

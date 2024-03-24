@@ -12,6 +12,7 @@
 
 #include "config.h"
 #include "constants.h"
+#include "font.h"
 
 #include <Adafruit_NeoPixel.h>
 
@@ -32,10 +33,12 @@ Visualizer visualizer(display);
 logging::Logger logger;
 
 time_t now;
-tm tm;
+struct tm tm;
 
 void setup()
 {
+	Serial.begin(115200);
+
 	const unsigned long start = millis();
 
 	logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "WIFI", "Setting up WiFi (SSID: %s)", ssid);
@@ -86,7 +89,8 @@ void loop()
 	localtime_r(&now, &tm);
 
 	display.render_background();
-	display.render_time(tm.tm_hour, tm.tm_min, tm.tm_sec);
+	// display.render_time(tm.tm_hour, tm.tm_min, tm.tm_sec);
+	display.render_text("makerspace");
 
 	display.update();
 	visualizer.update();

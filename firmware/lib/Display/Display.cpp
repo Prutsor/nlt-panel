@@ -98,6 +98,13 @@ void Display::render_character(const int offset, const int character[25])
 {
     const bool is_wide = is_wide_character(character);
 
+    if (is_wide) {
+        if (offset < -6) return;
+    }
+
+    if (offset < -5) return;
+    if (offset > 17) return;
+
     for (int i = 0; i < 25; i++)
     {
         if (character[i] > 0)
@@ -113,18 +120,41 @@ void Display::render_character(const int offset, const int character[25])
             if (font_character_direction == 1)
                 row_offset = -row_offset;
 
-            if (row % 2 == 0)
-            {
-                _strip.setPixelColor(
-                    font_rows[row] + index + offset + row_offset,
-                    DIGIT_COLOR);
-            }
-            else
-            {
-                _strip.setPixelColor(
-                    font_rows[row] - index - offset - row_offset,
-                    DIGIT_COLOR);
-            }
+            int n;
+
+            if (row % 2 == 0) n = font_rows[row] + index + offset + row_offset;
+            else n = font_rows[row] - index - offset - row_offset;
+
+            int o;
+
+            if (row % 2 == 0) o = n - font_rows[row];
+            else o = font_rows[row] - n;
+
+            if (o > -font_rows_cutoff[row]) _strip.setPixelColor(n, DIGIT_COLOR);
+        }
+    }
+}
+
+void Display::render_text(const char *text)
+{
+    int offset = (int)round(millis() / 100) % (strlen(text) * 5 + 20);
+
+    offset = -offset + 20; // TODO: dynamic size
+
+    for (int i = 0; i < strlen(text); i++)
+    {
+        const int character = toUpperCase(text[i]);
+
+        const int index = character - 65;
+
+        // Serial.println(String(text[i]) + " " + String(index) + " " + String(offset));
+
+        if (index < 27) {
+            render_character(offset, font_characters[index]);
+
+            offset += (is_wide_character(font_characters[index])) ? 6 : 5;
+        } else {
+            offset += 5;
         }
     }
 }
