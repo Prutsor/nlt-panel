@@ -25,7 +25,7 @@ class Display
         void render_time(int hours, int minutes, int seconds);
 
         void render_character(int offset, const int character[25]);
-        void render_text(const char *text);
+        void render_text(char *text);
 
         void render_background();
 
@@ -35,6 +35,15 @@ class Display
         static uint32_t scale_brightness(uint32_t color, float brightness);
 
         static bool is_wide_character(const int character[25]);
+
+        void sanitize_text(char *text);
+        void calculate_text_size(int *text);
+
+        char *_text;
+        int _text_size = 0;
+        
+        int _text_buffer[64] = {};
+        int _text_buffer_size = 0;
 
         int _digit_buffer[2];
 

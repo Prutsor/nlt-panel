@@ -94,6 +94,28 @@ bool Display::is_wide_character(const int character[25])
     return false;
 }
 
+void Display::sanitize_text(char *text)
+{   
+    _text_buffer_size = (int)strlen(text);
+
+    for (size_t i = 0; i < strlen(text); i++)
+    {
+        _text_buffer[i] = toupper(text[i]) - 65;
+
+        if (_text_buffer[i] >= 27) _text_buffer[i] = 27;
+    }
+}
+
+void Display::calculate_text_size(int *text)
+{
+    _text_size = 0;
+
+    for (int i = 0; i < _text_buffer_size; i++)
+    {
+        _text_size += (is_wide_character(font_characters[text[i]])) ? 6 : 5;
+    }
+}
+
 void Display::render_character(const int offset, const int character[25])
 {
     const bool is_wide = is_wide_character(character);
@@ -135,26 +157,26 @@ void Display::render_character(const int offset, const int character[25])
     }
 }
 
-void Display::render_text(const char *text)
+void Display::render_text(char *text)
 {
-    int offset = (int)round(millis() / 100) % (strlen(text) * 5 + 20);
-
-    offset = -offset + 20; // TODO: dynamic size
-
-    for (int i = 0; i < strlen(text); i++)
+    if (_text == NULL || strcmp(_text, text) != 0)
     {
-        const int character = toUpperCase(text[i]);
+        _text = text;
+        
+        sanitize_text(_text);
+        calculate_text_size(_text_buffer);
+    }
 
-        const int index = character - 65;
+    int offset = -((int)round(millis() / 100) % (_text_size + 20)) + 20;
 
-        // Serial.println(String(text[i]) + " " + String(index) + " " + String(offset));
+    for (int i = 0; i < _text_buffer_size; i++)
+    {
+        const int character = _text_buffer[i];
 
-        if (index < 27) {
-            render_character(offset, font_characters[index]);
+        if (character < 28) {
+            render_character(offset, font_characters[character]);
 
-            offset += (is_wide_character(font_characters[index])) ? 6 : 5;
-        } else {
-            offset += 5;
+            offset += (is_wide_character(font_characters[character])) ? 6 : 5;
         }
     }
 }
