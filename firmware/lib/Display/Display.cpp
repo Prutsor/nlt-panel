@@ -102,7 +102,7 @@ void Display::sanitize_text(char *text)
     {
         _text_buffer[i] = toupper(text[i]) - 65;
 
-        if (_text_buffer[i] >= 27) _text_buffer[i] = 27;
+        if (_text_buffer[i] >= 27 || _text_buffer[i] < 0) _text_buffer[i] = 27;
     }
 }
 
@@ -113,6 +113,7 @@ void Display::calculate_text_size(int *text)
     for (int i = 0; i < _text_buffer_size; i++)
     {
         _text_size += (is_wide_character(font_characters[text[i]])) ? 6 : 5;
+        _text_size -= (text[i] == 8) ? 1 : 0;
     }
 }
 
@@ -125,7 +126,7 @@ void Display::render_character(const int offset, const int character[25])
     }
 
     if (offset < -5) return;
-    if (offset > 17) return;
+    if (offset > 19) return;
 
     for (int i = 0; i < 25; i++)
     {
@@ -147,12 +148,12 @@ void Display::render_character(const int offset, const int character[25])
             if (row % 2 == 0) n = font_rows[row] + index + offset + row_offset;
             else n = font_rows[row] - index - offset - row_offset;
 
-            int o;
+            int o; // TODO: ????
 
             if (row % 2 == 0) o = n - font_rows[row];
             else o = font_rows[row] - n;
 
-            if (o > -font_rows_cutoff[row]) _strip.setPixelColor(n, DIGIT_COLOR);
+            if (o > -font_row_culling_left[row] && o < font_row_culling_right[row]) _strip.setPixelColor(n, DIGIT_COLOR);
         }
     }
 }
@@ -173,10 +174,13 @@ void Display::render_text(char *text)
     {
         const int character = _text_buffer[i];
 
-        if (character < 28) {
+        if (character < 27) {
             render_character(offset, font_characters[character]);
 
             offset += (is_wide_character(font_characters[character])) ? 6 : 5;
+            offset -= (character == 8) ? 1 : 0;
+        } else {
+            offset += 4;
         }
     }
 }
