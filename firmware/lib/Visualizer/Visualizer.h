@@ -5,7 +5,7 @@
 
 #include "Display.h"
 
-#include "constants.h"
+#include "constants.hpp"
 #include "config.h"
 
 #include <ESP8266WiFi.h>

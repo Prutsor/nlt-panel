@@ -1,4 +1,4 @@
-#include "constants.h"
+#include "constants.hpp"
 
 const uint16_t STRIP_LEDS = 128;
 const uint16_t STRIP_PIN = D6;

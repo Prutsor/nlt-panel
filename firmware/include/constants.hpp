@@ -1,5 +1,5 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef CONSTANTS_HPP
+#define CONSTANTS_HPP
 
 #include "Arduino.h"
 #include <Adafruit_NeoPixel.h>
@@ -16,4 +16,4 @@ extern const uint32_t DIGIT_COLOR;
 extern const uint32_t WHITE_COLOR;
 extern const uint32_t BLACK_COLOR;
 
-#endif  // CONSTANTS_H
+#endif  // CONSTANTS_HPP

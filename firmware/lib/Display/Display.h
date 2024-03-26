@@ -3,9 +3,9 @@
 
 #include "Arduino.h"
 
-#include "constants.h"
 #include "config.h"
-#include "font.h"
+#include "constants.hpp"
+#include "font.hpp"
 
 #include <Adafruit_NeoPixel.h>
 #include <FastLED.h> // TODO: custom noise implementation
