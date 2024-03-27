@@ -7,7 +7,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 
-#include <Logger.h>
+#include <logger.h>
 #include <time.h>
 
 #include "config.h"
