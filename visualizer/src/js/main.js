@@ -72,6 +72,11 @@ document.addEventListener('alpine:init', () => {
 
 			console.log(this.panels);
 
+			if (await tauri.invoke('panel_is_streaming')) {
+				this.is_streaming = true;
+				await this.renderer.turn_on();
+			}
+
 			this.menu_load_finish();
 		},
 
@@ -94,26 +99,41 @@ document.addEventListener('alpine:init', () => {
 			this.metadata.fps++;
 		},
 
+		async stream_test() {
+			await tauri.window.appWindow.emit('stream_data', "test");
+		},
+
 		async stream_start(panel) {
 			this.menu_load_start();
 
-			await tauri.invoke('panel_start_stream', { panel });
+			try {
+				let finish = tauri.invoke('panel_start_stream', {panel});
 
-			this.is_streaming = true;
-			await this.renderer.turn_on();
+				this.is_streaming = true;
+				await this.renderer.turn_on();
 
-			this.menu_load_finish();
-		},
+				this.menu_load_finish();
 
-		async stream_stop() {
-			this.menu_load_start();
-
-			await tauri.invoke('panel_stop_stream');
+				await finish;
+			} catch (error) {
+				console.error(error);
+			}
 
 			this.is_streaming = false;
 			await this.renderer.turn_off();
 
 			this.menu_load_finish();
+		},
+
+		async stream_stop() {
+			try {
+				await tauri.window.appWindow.emit('stream_stop');
+
+				this.is_streaming = false;
+				await this.renderer.turn_off();
+			} catch (error) {
+				console.error(error);
+			}
 		},
 
 		menu_select_panel() {

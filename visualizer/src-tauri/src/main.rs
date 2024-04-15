@@ -3,16 +3,16 @@
 use std::{net::Ipv4Addr, sync::Arc};
 
 use serde::{Deserialize, Serialize};
-use tauri::Manager;
+use tauri::{EventHandler, Manager};
 use tokio::io;
 
 #[cfg(target_os = "windows")]
 use window_vibrancy::apply_mica;
 
 use mdns_sd::{ServiceDaemon, ServiceEvent};
-use tokio::task::JoinHandle;
+use tokio::io::AsyncReadExt;
 use tokio::net::TcpStream;
-use tokio::sync::Mutex;
+use tokio::sync::{mpsc, Mutex};
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Panel {
@@ -27,7 +27,7 @@ pub struct Panel {
 struct AppState {
     panels: Vec<Panel>,
 
-    stream: Option<JoinHandle<()>>,
+    is_streaming: bool,
 }
 
 #[tauri::command]
@@ -46,63 +46,107 @@ async fn add_panel(
     Ok(())
 }
 
+#[derive(Debug)]
+enum Command {
+    Data,
+    Disconnect,
+}
+
 #[tauri::command]
 async fn panel_start_stream(
     window: tauri::Window,
     state: tauri::State<'_, Arc<Mutex<AppState>>>,
     panel: Panel,
 ) -> Result<(), String> {
-    let stream = tokio::spawn(async move {
-        let client = TcpStream::connect((panel.ip.unwrap().to_string(), 1935))
-            .await
-            .unwrap();
+    if state.lock().await.is_streaming {
+        return Err("Already streaming".to_string());
+    }
 
-        loop {
-            client.readable().await.unwrap();
+    state.lock().await.is_streaming = true;
 
-            let mut buffer = vec![0; 1024];
+    let mut socket = match TcpStream::connect((panel.ip.unwrap().to_string(), 1935)).await {
+        Ok(socket) => socket,
+        Err(e) => {
+            eprintln!("Failed to connect to panel: {}", e);
+            return Err(e.to_string());
+        }
+    };
 
-            match client.try_read(&mut buffer) {
-                Ok(n) => {
-                    buffer.truncate(n);
+    let (tx, mut rx) = mpsc::channel(1);
+    let data_sender = tx.clone();
+    let stop_sender = tx.clone();
 
-                    match buffer[0] {
-                        0x01 => {
-                            if buffer.len() > 255 {
-                                window.emit("stream_data", buffer.clone()).unwrap();
+    let data_event = window.listen("stream_data", move |event| {
+        data_sender.try_send((Command::Data, event)).unwrap();
+    });
+
+    let stop_event = window.listen("stream_stop", move |event| {
+        stop_sender.try_send((Command::Disconnect, event)).unwrap();
+    });
+
+    let mut buf = vec![0; 1024];
+
+    loop {
+        tokio::select! {
+            result = socket.read(&mut buf) => {
+                match result {
+                    Ok(n) => {
+                        buf.truncate(n);
+
+                        match buf[0] {
+                            0x01 => {
+                                if buf.len() > 255 {
+                                    window.emit("stream_data", buf.clone()).unwrap();
+                                }
+                            }
+                            0x02 => {
+                                window.emit("stream_metadata", buf.clone()).unwrap();
+                            }
+                            _ => {
+                                eprintln!("Unknown packet type: {}", buf[0]);
                             }
                         }
-                        0x02 => {
-                            window.emit("stream_metadata", buffer.clone()).unwrap();
-                        }
-                        _ => {
-                            eprintln!("Unknown packet type: {}", buffer[0]);
-                        }
+                    }
+                    Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
+                        continue;
+                    }
+                    Err(e) => {
+                        eprintln!("Failed to read from TCP stream: {}", e);
+                        break;
                     }
                 }
-                Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
-                    continue;
-                }
-                Err(e) => {
-                    eprintln!("Failed to read from TCP stream: {}", e);
-                    break;
+            }
+
+            payload = rx.recv() => {
+                match payload {
+                    Some((Command::Data, event)) => {
+                        let data: Vec<u8> = event.payload().unwrap().as_bytes().to_vec();
+                        println!("Data: {:?}", data);
+                    }
+                    Some((Command::Disconnect, _)) => {
+                        break;
+                    }
+                    None => {
+                        return Ok(());
+                    }
                 }
             }
         }
-    });
 
-    state.lock().await.stream = Some(stream);
+        buf = vec![0; 1024];
+    }
+
+    window.unlisten(data_event);
+    window.unlisten(stop_event);
+
+    state.lock().await.is_streaming = false;
 
     Ok(())
 }
 
 #[tauri::command]
-async fn panel_stop_stream(state: tauri::State<'_, Arc<Mutex<AppState>>>) -> Result<(), String> {
-    if let Some(client) = state.lock().await.stream.take() {
-        client.abort();
-    }
-
-    Ok(())
+async fn panel_is_streaming(state: tauri::State<'_, Arc<Mutex<AppState>>>) -> Result<bool, String> {
+    Ok(state.lock().await.is_streaming)
 }
 
 fn main() {
@@ -114,7 +158,7 @@ fn main() {
             get_panels,
             add_panel,
             panel_start_stream,
-            panel_stop_stream
+            panel_is_streaming
         ])
         .setup(|app| {
             let window = app.get_window("main").unwrap();
