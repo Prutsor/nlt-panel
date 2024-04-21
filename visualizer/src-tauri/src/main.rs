@@ -10,7 +10,7 @@ use tokio::io;
 use window_vibrancy::apply_mica;
 
 use mdns_sd::{ServiceDaemon, ServiceEvent};
-use tokio::io::AsyncReadExt;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 use tokio::sync::{mpsc, Mutex};
 
@@ -120,8 +120,9 @@ async fn panel_start_stream(
             payload = rx.recv() => {
                 match payload {
                     Some((Command::Data, event)) => {
-                        let data: Vec<u8> = event.payload().unwrap().as_bytes().to_vec();
-                        println!("Data: {:?}", data);
+                        let data = serde_json::from_str::<Vec<u8>>(&event.payload().unwrap()).unwrap();
+
+                        socket.write(&data).await.expect("Failed to send data");
                     }
                     Some((Command::Disconnect, _)) => {
                         break;
