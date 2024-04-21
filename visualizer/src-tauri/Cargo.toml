@@ -1,7 +1,7 @@
 [package]
 name = "nlt-panel-visualizer"
-version = "4.0.0"
-description = "A Tauri App"
+version = "4.1.0"
+description = "NLT Panel Visualizer"
 authors = ["Prutsor <prutsor@prutsor.nl>"]
 license = ""
 repository = "https://github.com/Prutsor/nlt-panel-4"

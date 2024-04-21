@@ -24,10 +24,10 @@
 MODE s_mode = MODE::Time;
 char s_text[128] = "test";
 
-// @version 4.0.0
+// @version 4.1.0
 
 constexpr uint8_t MAJOR = 4;
-constexpr uint8_t MINOR = 0;
+constexpr uint8_t MINOR = 1;
 constexpr uint8_t PATCH = 0;
 
 Adafruit_NeoPixel strip(STRIP_LEDS, STRIP_PIN, STRIP_TYPE);
