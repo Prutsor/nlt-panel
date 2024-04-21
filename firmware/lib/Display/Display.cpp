@@ -162,7 +162,8 @@ void Display::render_text(char *text)
 {
     if (_text == NULL || strcmp(_text, text) != 0)
     {
-        _text = text;
+        _text = new char[strlen(text) + 1];
+        memcpy(_text, text, strlen(text) + 1);
         
         sanitize_text(_text);
         calculate_text_size(_text_buffer);

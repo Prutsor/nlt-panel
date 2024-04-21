@@ -19,6 +19,11 @@
 #include "Display.h"
 #include "Visualizer.h"
 
+#include "settings.hpp"
+
+MODE s_mode = MODE::Time;
+char s_text[128] = "test";
+
 // @version 4.0.0
 
 constexpr uint8_t MAJOR = 4;
@@ -89,8 +94,15 @@ void loop()
 	localtime_r(&now, &tm);
 
 	display.render_background();
-	// display.render_time(tm.tm_hour, tm.tm_min, tm.tm_sec);
-	display.render_text("makerspace");
+	
+	if (s_mode == MODE::Time)
+	{
+		display.render_time(tm.tm_hour, tm.tm_min, tm.tm_sec);
+	}
+	else if (s_mode == MODE::Text)
+	{
+		display.render_text(s_text);
+	}
 
 	display.update();
 	visualizer.update();

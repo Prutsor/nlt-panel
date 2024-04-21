@@ -18,6 +18,30 @@ void Visualizer::update()
 	}
 
 	if (!_client) return;
+
+	if (_client.available() > 0) {
+		const int size = _client.available();
+
+		_client.readBytes(_recv_buffer, size);
+
+		switch (_recv_buffer[0]) {
+			case 0x03: // SET_MODE
+				s_mode = static_cast<MODE>(_recv_buffer[1]);
+				
+				break;
+			case 0x04: // SET_TEXT
+				for (int i = 0; i < size - 1; i++) {
+					s_text[i] = _recv_buffer[i + 1];
+				}
+
+				s_text[size - 1] = 0;
+
+				break;
+			default:
+				break;
+		}
+	}
+
 	if (!_client.availableForWrite()) return;
 
 	bool written = false;

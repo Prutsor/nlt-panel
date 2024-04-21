@@ -9,6 +9,7 @@
 
 #include <Adafruit_NeoPixel.h>
 #include <FastLED.h> // TODO: custom noise implementation
+#include <logger.h>
 
 class Display
 {
@@ -32,6 +33,8 @@ class Display
         void update();
 
     private:
+        logging::Logger _logger;
+
         static uint32_t scale_brightness(uint32_t color, float brightness);
 
         static bool is_wide_character(const int character[25]);
