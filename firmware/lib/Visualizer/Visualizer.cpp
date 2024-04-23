@@ -52,8 +52,6 @@ void Visualizer::update()
 
 	if (!_client.availableForWrite()) return;
 
-	bool written = false;
-
 	if (millis() - last_metadata > 1000 / 2) {
 		_metadata_buffer[0] = 0x02;
 
@@ -73,12 +71,11 @@ void Visualizer::update()
 		_metadata_buffer[14] = signal_strength();
 
 		_client.write(_metadata_buffer, sizeof(_metadata_buffer));
-		written = true;
 
 		last_metadata = millis();
 	}
 
-	if (millis() - last_update > 1000 / 24) {
+	if (millis() - last_update > 1000 / 15) {
 		// TODO: read raw neopixel buffer
 		// TODO: receive video stream?
 
@@ -94,12 +91,9 @@ void Visualizer::update()
 		}
 
 		_client.write(_stream_buffer, sizeof(_stream_buffer));
-		written = true;
 
 		last_update = millis();
 	}
-
-	if (written) _client.flush();
 }
 
 void Visualizer::_insert_buffer(uint8_t *buffer, const uint32_t *data, const uint8_t size, const uint8_t offset)
