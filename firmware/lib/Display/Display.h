@@ -51,6 +51,8 @@ class Display
 
         int _digit_buffer[2];
 
+        unsigned long _text_position{};
+
         unsigned long _last_time{};
         unsigned long _delta{};
         uint16_t _hue{};

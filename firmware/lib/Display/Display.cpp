@@ -164,12 +164,14 @@ void Display::render_text(char *text)
     {
         _text = new char[strlen(text) + 1];
         memcpy(_text, text, strlen(text) + 1);
+
+        _text_position = millis();
         
         sanitize_text(_text);
         calculate_text_size(_text_buffer);
     }
 
-    int offset = -((int)round(millis() / 100) % (_text_size + 20)) + 20;
+    int offset = -((int)round((millis() - _text_position) / 100) % (_text_size + 20)) + 20;
 
     for (int i = 0; i < _text_buffer_size; i++)
     {
