@@ -35,7 +35,7 @@
 3. Klik de stukjes aan de zijkant van de hexagons op het bord.
 
 <p align="center">
-    <img height=500 src=".github/images/caps-plaatsen.jpg" alt="Plaatsen van de zijstukjes">
+    <img height=500 src=".github/images/caps-plaatsen.jpg" alt="Plaatsen van de zijstukjes" style="object-fit: scale-down;">
 </p>
 
 </details>
@@ -84,7 +84,7 @@ Om de firmware op de ESP te zetten moet je eerst de volgende dingen hebben:
 Na het installeren van deze programma’s moet je de repository downloaden en de `firmware` map openen in Visual Studio Code. Als je de map hebt geopend, moet je naar de `include` map gaan en het `config.example.h` bestand kopiëren naar `config.h`. In dit bestand moet je de wifi gegevens invullen. Hierbij is `ssid` de naam van het netwerk en `password` het wachtwoord van het netwerk. Verder kun je de naam van de klok eventueel aanpassen door `SERVICE_NAME` te wijzigen. Nu moet je de ESP aansluiten en op de `upload` knop klikken (hieronder aangegeven)
 
 <p align="center">
-    <img height=450 src="https://docs.platformio.org/en/latest/_images/platformio-ide-vscode-build-project.png">
+    <img height=450 src="https://docs.platformio.org/en/latest/_images/platformio-ide-vscode-build-project.png" style="object-fit: scale-down;">
 </p>
 
 Je kunt de klok via de visualizer testen voordat je alle elektronica aansluit om te kijken of het gelukt is. De visualizer is [hier](https://github.com/Prutsor/nlt-panel-4/releases) te downloaden. Om met de klok te verbinden moet je op het verbind icoontje klikken. Daar zou je de klok moeten zien verschijnen. 
@@ -96,7 +96,7 @@ Je kunt de klok via de visualizer testen voordat je alle elektronica aansluit om
 Maak de voeding en ESP vast op de plaat van de standaard. Gebruik voor de ESP eventueel een breadboard of iets dergelijks.
 
 <p align="center">
-    <img height=500 src=".github/images/standaard.jpg" alt="Plaatsen van de voeding en ESP">
+    <img height=500 src=".github/images/standaard.jpg" alt="Plaatsen van de voeding en ESP" style="object-fit: scale-down;">
 </p>
 
 Verbind de voeding met de ESP en de ledstrip. Gebruik een kabel om de positieve en negatieve polen van de voeding te verbinden met de respectievelijke polen van de ESP en de LED-strip. Gebruik een kabel om de pin 6 van de ESP te verbinden met de data pin van de LED-strip.
