@@ -177,11 +177,11 @@ export const setup = async () => {
 			set_default_material = async () => {
 				for await (const hexagon of hexagons) {
 					hexagon.material = default_material;
-				}
 
-				for await (const uuid of caps) {
-					for await (const cap of hexagon_caps[uuid]) {
-						cap.material = default_material;
+					if (hexagon.uuid in hexagon_caps) {
+						for await (const cap of hexagon_caps[hexagon.uuid]) {
+							cap.material = default_material;
+						}
 					}
 				}
 			};
