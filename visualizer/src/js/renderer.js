@@ -53,7 +53,7 @@ export const setup = async () => {
 	);
 	const model = await tauri.fs.readTextFile(model_resource);
 
-	let default_material; 
+	let default_material;
 	let set_default_material;
 	let unset_default_material;;
 	let hexagon_materials = [];
@@ -78,13 +78,13 @@ export const setup = async () => {
 			});
 
 			let hexagons = [];
-			const hexagon_caps = [];
+			const caps = [];
 
 			model.traverse((object) => {
 				if (object.name) {
-					if (object.name.includes('Hexagon_Cap'))
+					if (object.name.includes('Hexagon_Cap') || object.name.includes('Hexagrid_Cap'))
 						return object.children.length >= 2
-							? hexagon_caps.push(...object.children)
+							? caps.push(...object.children)
 							: undefined;
 					if (
 						object.name.includes('Hexagon') &&
@@ -144,21 +144,45 @@ export const setup = async () => {
 				hexagon_materials[index] = material;
 			}
 
-			for await (const hexagon of hexagon_caps) {
-				hexagon.layers.enable(BLOOM_SCENE);
+			const hexagons_ = [...hexagons];
+			const hexagon_caps = {};
 
-				// TODO: apply color to caps
+			for await (const cap of caps) {
+				cap.layers.enable(BLOOM_SCENE);
+
+				const hexagon = hexagons_.sort((a, b) => {
+					return hexagon_position(cap).distanceTo(hexagon_position(a)) - hexagon_position(cap).distanceTo(hexagon_position(b));
+				})[0];
+
+				if (!(hexagon.uuid in hexagon_caps)) hexagon_caps[hexagon.uuid] = [];
+
+				hexagon_caps[hexagon.uuid].push(cap);
+
+				// TODO: fix some caps being wrong color
 			}
+
 
 			unset_default_material = async () => {
 				for await (const [index, hexagon] of Object.entries(hexagons)) {
 					hexagon.material = hexagon_materials[index];
+
+					if (hexagon.uuid in hexagon_caps) {
+						for await (const cap of hexagon_caps[hexagon.uuid]) {
+							cap.material = hexagon_materials[index];
+						}
+					}
 				}
 			};
-			
+
 			set_default_material = async () => {
-				for await (const [index, hexagon] of Object.entries(hexagons)) {
+				for await (const hexagon of hexagons) {
 					hexagon.material = default_material;
+				}
+
+				for await (const uuid of caps) {
+					for await (const cap of hexagon_caps[uuid]) {
+						cap.material = default_material;
+					}
 				}
 			};
 
@@ -227,7 +251,7 @@ export const setup = async () => {
 	};
 
 	const set_pixel = (i, r, g, b) => {
-		if (hexagon_materials[i]) hexagon_materials[i].color.setRGB(r/255, g/255, b/255);
+		if (hexagon_materials[i]) hexagon_materials[i].color.setRGB(r / 255, g / 255, b / 255);
 	};
 
 	const render = () => {
