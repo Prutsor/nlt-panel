@@ -201,13 +201,23 @@ uint32_t Display::scale_brightness(const uint32_t color, float brightness)
 
 void Display::render_background()
 {
-    const uint32_t offset = millis() * NOISE_SPEED;
-
-    for (int i = 0; i < STRIP_LEDS; i++)
+    if (s_background_mode == BACKGROUND_MODE::Noise)
     {
-        const uint16_t noise = inoise16(noise_map[i][0] * NOISE_SCALE, noise_map[i][1] * NOISE_SCALE, offset);
+        const uint32_t offset = millis() * NOISE_SPEED;
 
-        _strip.setPixelColor(i, scale_brightness(Adafruit_NeoPixel::ColorHSV(noise), BACKGROUND_BRIGHTNESS));
+        for (int i = 0; i < STRIP_LEDS; i++)
+        {
+            const uint16_t noise = inoise16(noise_map[i][0] * NOISE_SCALE, noise_map[i][1] * NOISE_SCALE, offset);
+
+            _strip.setPixelColor(i, scale_brightness(Adafruit_NeoPixel::ColorHSV(noise), BACKGROUND_BRIGHTNESS));
+        }
+    }
+    else if (s_background_mode == BACKGROUND_MODE::Color)
+    {
+        for (int i = 0; i < STRIP_LEDS; i++)
+        {
+            _strip.setPixelColor(i, scale_brightness(s_background_color, BACKGROUND_BRIGHTNESS));
+        }
     }
 };
 

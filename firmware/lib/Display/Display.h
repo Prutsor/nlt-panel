@@ -6,6 +6,7 @@
 #include "config.h"
 #include "constants.hpp"
 #include "font.hpp"
+#include "settings.hpp"
 
 #include <Adafruit_NeoPixel.h>
 #include <FastLED.h> // TODO: custom noise implementation

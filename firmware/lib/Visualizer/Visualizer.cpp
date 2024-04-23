@@ -25,17 +25,25 @@ void Visualizer::update()
 		_client.readBytes(_recv_buffer, size);
 
 		switch (_recv_buffer[0]) {
-			case 0x03: // SET_MODE
-				s_mode = static_cast<MODE>(_recv_buffer[1]);
+			case 0x03: // SET_MODE (VALUE, MODE)
+				if (_recv_buffer[1] == 0x00) {
+					s_display_mode = static_cast<DISPLAY_MODE>(_recv_buffer[2]);
+				} else if (_recv_buffer[1] == 0x01) {
+					s_background_mode = static_cast<BACKGROUND_MODE>(_recv_buffer[2]);
+				}
 				
 				break;
 			case 0x04: // SET_TEXT
 				for (int i = 0; i < size - 1; i++) {
-					s_text[i] = _recv_buffer[i + 1];
+					s_display_text[i] = _recv_buffer[i + 1];
 				}
 
-				s_text[size - 1] = 0;
+				s_display_text[size - 1] = 0;
 
+				break;
+			case 0x05: // SET_COLOR
+				s_background_color = (_recv_buffer[1] << 16) | (_recv_buffer[2] << 8) | _recv_buffer[3];
+				
 				break;
 			default:
 				break;

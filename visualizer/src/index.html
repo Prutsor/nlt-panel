@@ -228,14 +228,26 @@
 					<div x-show="is_streaming" class="space-y-2 mt-2">
 						<div class="flex">
 							<p class="text-base font-medium text-neutral-50 mr-auto">
-								Mode
+								Display Mode
 							</p>
 							
-							<button @click="stream_set_mode(0)" type="button" class="rounded-lg border border-gray-300/5 bg-white/5 px-2 py-1 text-center text-xs font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5">
+							<button @click="stream_set_mode(0, 0)" type="button" class="rounded-lg border border-gray-300/5 bg-white/5 px-2 py-1 text-center text-xs font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5">
 								Time
 							</button>
-							<button @click="stream_set_mode(1) "type="button" class="ml-2 rounded-lg border border-gray-300/5 bg-white/5 px-2 py-1 text-center text-xs font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5">
+							<button @click="stream_set_mode(0, 1) "type="button" class="ml-2 rounded-lg border border-gray-300/5 bg-white/5 px-2 py-1 text-center text-xs font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5">
 								Text
+							</button>
+						</div>
+						<div class="flex">
+							<p class="text-base font-medium text-neutral-50 mr-auto">
+								Background Mode
+							</p>
+							
+							<button @click="stream_set_mode(1, 0)" type="button" class="rounded-lg border border-gray-300/5 bg-white/5 px-2 py-1 text-center text-xs font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5">
+								Noise
+							</button>
+							<button @click="stream_set_mode(1, 1) "type="button" class="ml-2 rounded-lg border border-gray-300/5 bg-white/5 px-2 py-1 text-center text-xs font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5">
+								Color
 							</button>
 						</div>
 						<div class="flex">
@@ -247,6 +259,18 @@
 								<input x-model="stream_text" @submit.prevent="stream_set_text" type="text" class="uppercase rounded-lg border border-gray-300/5 bg-white/5 px-2 py-1 text-right text-xs font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5 focus:ring-opacity-5">
 							</p>
 							<button @click="stream_set_text() "type="button" class="ml-2 rounded-lg border border-gray-300/5 bg-white/5 px-2 py-1 text-center text-xs font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5">
+								Set
+							</button>
+						</div>
+						<div class="flex">
+							<p class="text-base font-medium text-neutral-50 mr-auto">
+								Background Color
+							</p>
+
+							<p class="text-base font-medium text-neutral-50/50">
+								<input x-model="stream_color" @submit.prevent="stream_set_color" type="color" class="uppercase rounded-lg border border-gray-300/5 bg-white/5 px-2 py-1 text-right text-xs font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5 focus:ring-opacity-5">
+							</p>
+							<button @click="stream_set_color() "type="button" class="ml-2 rounded-lg border border-gray-300/5 bg-white/5 px-2 py-1 text-center text-xs font-medium text-white shadow-sm transition-all hover:bg-gray-100/5 focus:ring focus:ring-gray-100/5">
 								Set
 							</button>
 						</div>

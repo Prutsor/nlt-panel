@@ -21,8 +21,11 @@
 
 #include "settings.hpp"
 
-MODE s_mode = MODE::Time;
-char s_text[128] = "test";
+DISPLAY_MODE s_display_mode = DISPLAY_MODE::Time;
+BACKGROUND_MODE s_background_mode = BACKGROUND_MODE::Noise;
+
+char s_display_text[128] = "test";
+uint32_t s_background_color = 0x039dfc;
 
 // @version 4.1.0
 
@@ -95,13 +98,13 @@ void loop()
 
 	display.render_background();
 	
-	if (s_mode == MODE::Time)
+	if (s_display_mode == DISPLAY_MODE::Time)
 	{
 		display.render_time(tm.tm_hour, tm.tm_min, tm.tm_sec);
 	}
-	else if (s_mode == MODE::Text)
+	else if (s_display_mode == DISPLAY_MODE::Text)
 	{
-		display.render_text(s_text);
+		display.render_text(s_display_text);
 	}
 
 	display.update();

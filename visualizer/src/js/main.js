@@ -19,6 +19,7 @@ document.addEventListener('alpine:init', () => {
 		show_metadata: false,
 
 		stream_text: 'TEST',
+		stream_color: '#039dfc',
 
 		async init() {
 			this.menu_load_start();
@@ -101,14 +102,23 @@ document.addEventListener('alpine:init', () => {
 			this.metadata.fps++;
 		},
 
-		async stream_set_mode(mode) {
-			const packet = [0x03, mode];
+		async stream_set_mode(mode, value) {
+			const packet = [0x03, mode, value];
 
 			await tauri.window.appWindow.emit('stream_data', packet);
 		},
 
 		async stream_set_text() {
 			const packet = [0x04, ...this.stream_text.toUpperCase().split('').map((c) => c.charCodeAt(0))];
+
+			await tauri.window.appWindow.emit('stream_data', packet);
+		},
+
+		async stream_set_color() {
+			const tokens = this.stream_color.match(/[0-9a-z]{2}/gi);
+			const bytes = tokens.map((token) => parseInt(token, 16));
+
+			const packet = [0x05, bytes[0], bytes[1], bytes[2]];
 
 			await tauri.window.appWindow.emit('stream_data', packet);
 		},
