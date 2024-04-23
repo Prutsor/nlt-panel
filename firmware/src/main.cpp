@@ -31,7 +31,7 @@ uint32_t s_background_color = 0x039dfc;
 
 constexpr uint8_t MAJOR = 4;
 constexpr uint8_t MINOR = 1;
-constexpr uint8_t PATCH = 0;
+constexpr uint8_t PATCH = 1;
 
 Adafruit_NeoPixel strip(STRIP_LEDS, STRIP_PIN, STRIP_TYPE);
 
