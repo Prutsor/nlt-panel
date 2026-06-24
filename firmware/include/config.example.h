@@ -12,7 +12,9 @@ constexpr int SERVICE_PORT = 8266;
 constexpr const char *ssid = "****";
 constexpr const char *password = "****";
 
-constexpr const char *NTP_SERVER = "nl.pool.ntp.org";
 constexpr const char *NTP_TZ = "CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00";
+constexpr const char *NTP_SERVER = "ntp.time.nl";
+constexpr const char *NTP_SERVER_FALLBACK_1 = "time.google.com";
+constexpr const char *NTP_SERVER_FALLBACK_2 = "time.cloudflare.com";
 
-#endif  // CONFIG_H
+#endif // CONFIG_H
